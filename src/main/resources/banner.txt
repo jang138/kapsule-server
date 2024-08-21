@@ -1,17 +1,9 @@
-${AnsiColor.BRIGHT_RED}KKKKKKKKK    KKKKKKK                  lllllll                                    lllllll
-${AnsiColor.BRIGHT_RED}K:::::::K    K:::::K                  l:::::l                                    l:::::l
-${AnsiColor.BRIGHT_YELLOW}K:::::::K    K:::::K                  l:::::l                                    l:::::l
-${AnsiColor.BRIGHT_YELLOW}K:::::::K   K::::::K                  l:::::l                                    l:::::l
-${AnsiColor.BRIGHT_GREEN}KK::::::K  K:::::KKK  aaaaaaaaaaaaa    l::::l     ssssssssss   uuuuuu    uuuuuu   l::::l     eeeeeeeeeeee
-${AnsiColor.BRIGHT_GREEN}  K:::::K K:::::K     a::::::::::::a   l::::l   ss::::::::::s  u::::u    u::::u   l::::l   ee::::::::::::ee
-${AnsiColor.GREEN}  K::::::K:::::K      aaaaaaaaa:::::a  l::::l ss:::::::::::::s u::::u    u::::u   l::::l  e::::::eeeee:::::ee
-${AnsiColor.GREEN}  K:::::::::::K                a::::a  l::::l s::::::ssss:::::su::::u    u::::u   l::::l e::::::e     e:::::e
-${AnsiColor.BRIGHT_CYAN}  K:::::::::::K         aaaaaaa:::::a  l::::l  s:::::s  ssssss u::::u    u::::u   l::::l e:::::::eeeee::::::e
-${AnsiColor.BRIGHT_CYAN}  K::::::K:::::K      aa::::::::::::a  l::::l    s::::::s      u::::u    u::::u   l::::l e:::::::::::::::::e
-${AnsiColor.BLUE}  K:::::K K:::::K    a::::aaaa::::::a  l::::l       s::::::s   u::::u    u::::u   l::::l e::::::eeeeeeeeeee
-${AnsiColor.BLUE}KK::::::K  K:::::KKKa::::a    a:::::a  l::::l ssssss   s:::::s u:::::uuuu:::::u   l::::l e:::::::e
-${AnsiColor.BRIGHT_MAGENTA}K:::::::K   K::::::Ka::::a    a:::::a l::::::ls:::::ssss::::::su:::::::::::::::uul::::::le::::::::e
-${AnsiColor.BRIGHT_MAGENTA}K:::::::K    K:::::Ka:::::aaaa::::::a l::::::ls::::::::::::::s  u:::::::::::::::ul::::::l e::::::::eeeeeeee
-${AnsiColor.MAGENTA}K:::::::K    K:::::K a::::::::::aa:::al::::::l s:::::::::::ss    uu::::::::uu:::ul::::::l  ee:::::::::::::e
-${AnsiColor.MAGENTA}KKKKKKKKK    KKKKKKK  aaaaaaaaaa  aaaallllllll  sssssssssss        uuuuuuuu  uuuullllllll    eeeeeeeeeeeeee
+${AnsiColor.BRIGHT_RED} _   __                      _
+${AnsiColor.BRIGHT_YELLOW}| | / /                     | |
+${AnsiColor.BRIGHT_GREEN}| |/ /  __ _ _ __  ___ _   _| | ___
+${AnsiColor.GREEN}|    \ / _` | '_ \/ __| | | | |/ _ \
+${AnsiColor.BRIGHT_CYAN}| |\  \ (_| | |_) \__ \ |_| | |  __/
+${AnsiColor.BLUE}\_| \_/\__,_| .__/|___/\__,_|_|\___|
+${AnsiColor.BRIGHT_MAGENTA}            | |
+${AnsiColor.MAGENTA}            |_|
 ${AnsiColor.MAGENTA}:: Team Back To The Future ::
