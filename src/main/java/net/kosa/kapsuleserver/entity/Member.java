@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.kosa.kapsuleserver.base.entity.BaseEntity;
+import net.kosa.kapsuleserver.base.entity.Role;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -40,9 +41,9 @@ public class Member extends BaseEntity {
 	@Column(nullable = false)
 	private String kakaoId;
 
-	@Column(nullable = false)
+	@Column(nullable = false, length = 10)
 	@Enumerated(EnumType.STRING)
-	private String role;
+	private Role role;
 
 	@OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private List<SharedKey> sharedKeys;
