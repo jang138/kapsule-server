@@ -33,7 +33,7 @@ public class Capsule extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
+	private Long id;
 
 	@Column(nullable = false)
 	private String address;
@@ -45,10 +45,10 @@ public class Capsule extends BaseEntity {
 	private String capsuleCode;
 
 	@Column(nullable = false)
-	private float longitude;
+	private Float longitude;
 
 	@Column(nullable = false)
-	private float latitude;
+	private Float latitude;
 
 	@Column(nullable = false)
 	private String title;
