@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class SharedKeyId implements Serializable {
 
-	private long capsuleId;
+	private Long capsuleId;
 
-	private long memberId;
+	private Long memberId;
 }
