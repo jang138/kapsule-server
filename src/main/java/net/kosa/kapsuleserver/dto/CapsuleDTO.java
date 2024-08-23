@@ -7,6 +7,10 @@ import net.kosa.kapsuleserver.entity.Member;
 import lombok.Builder;
 import lombok.Getter;
 
+/**
+ * @author dayoung
+ * CapsuleDTO는 타임캡슐과 관련된 데이터를 전달합니다.
+ */
 @Getter
 @Builder
 public class CapsuleDTO {
