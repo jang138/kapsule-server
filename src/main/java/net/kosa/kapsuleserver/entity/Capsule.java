@@ -57,9 +57,12 @@ public class Capsule extends BaseEntity {
 	@Column(nullable = false)
 	private String content;
 
-	@ManyToOne(cascade = CascadeType.ALL)
+	@Column(nullable = false)
+	private Integer capsuleType;
+
+	@ManyToOne(cascade = CascadeType.REMOVE)
 	@JoinColumn(name = "MEMBER_ID", nullable = false)
-	private Member memberId;
+	private Member member;
 
 	@OneToMany(mappedBy = "capsule", cascade = CascadeType.ALL)
 	private List<SharedKey> sharedKeys;
