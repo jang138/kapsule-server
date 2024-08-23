@@ -1,6 +1,7 @@
 package net.kosa.kapsuleserver.service;
 
 import java.security.SecureRandom;
+import java.time.LocalDate;
 
 import org.springframework.stereotype.Service;
 
@@ -9,8 +10,13 @@ import net.kosa.kapsuleserver.entity.Capsule;
 import net.kosa.kapsuleserver.entity.Member;
 import net.kosa.kapsuleserver.repository.CapsuleRepository;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * @author dayoung
+ * CapsuleService는 타임캡슐과 관련된 로직들을 구현합니다.
+ */
 @Service
 @RequiredArgsConstructor
 public class CapsuleService {
@@ -20,6 +26,7 @@ public class CapsuleService {
 	private static final String CHARACTER_SET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 	private final SecureRandom random = new SecureRandom();
 
+	@Transactional
 	public void saveCapsule(CapsuleDTO capsuleDTO, Member member) {
 		Capsule capsule = Capsule.builder()
 			.memberId(member)
@@ -35,7 +42,7 @@ public class CapsuleService {
 		capsuleRepository.save(capsule);
 	}
 
-	// 8자리 난수를 생성하는 메소드
+	// CHARACTER_SET으로 구성된 난수를 생성하는 메소드
 	public String createRandomCode(int length) {
 		String code;
 
