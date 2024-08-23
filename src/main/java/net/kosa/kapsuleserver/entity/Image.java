@@ -29,7 +29,7 @@ public class Image extends BaseEntity {
 	@Column(nullable = false)
 	private String path;
 
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne(cascade = CascadeType.REMOVE)
 	@JoinColumn(name = "CAPSULE_ID", nullable = false)
-	private Capsule capsuleId;
+	private Capsule capsule;
 }
