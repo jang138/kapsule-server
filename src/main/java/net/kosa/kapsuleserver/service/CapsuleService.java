@@ -1,7 +1,10 @@
 package net.kosa.kapsuleserver.service;
 
 import java.security.SecureRandom;
-import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -22,7 +25,6 @@ import lombok.RequiredArgsConstructor;
 public class CapsuleService {
 
 	private final CapsuleRepository capsuleRepository;
-
 	private static final String CHARACTER_SET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 	private final SecureRandom random = new SecureRandom();
 
@@ -40,6 +42,31 @@ public class CapsuleService {
 			.build();
 
 		capsuleRepository.save(capsule);
+	}
+
+	// 나의 타임 캡슐 조회
+	@Transactional
+	public List<CapsuleDTO> findMyCapsule(Long id) {
+		List<Capsule> capsuleList = capsuleRepository.findAllByMemberId(id);
+
+		return convertToDTO(capsuleList);
+	}
+
+	// 캡슐 리스트를 DTO로 변환
+	public List<CapsuleDTO> convertToDTO(List<Capsule> capsuleList) {
+		return capsuleList.stream()
+			.map(capsule -> CapsuleDTO.builder()
+				.id(capsule.getId())
+				.member(capsule.getMember())
+				.title(capsule.getTitle())
+				.content(capsule.getContent())
+				.address(capsule.getAddress())
+				.longitude(capsule.getLongitude())
+				.latitude(capsule.getLatitude())
+				.unlockDate(capsule.getUnlockDate())
+				.capsuleCode(capsule.getCapsuleCode())
+				.build())
+			.collect(Collectors.toList());
 	}
 
 	// CHARACTER_SET으로 구성된 난수를 생성하는 메소드

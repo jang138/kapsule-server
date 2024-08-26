@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import net.kosa.kapsuleserver.base.entity.Role;
+import net.kosa.kapsuleserver.dto.CapsuleDTO;
 import net.kosa.kapsuleserver.entity.Capsule;
 import net.kosa.kapsuleserver.entity.Member;
 import net.kosa.kapsuleserver.repository.CapsuleRepository;
@@ -28,38 +30,58 @@ public class CapsuleTests {
 	@Autowired private CapsuleRepository capsuleRepository;
 
 	Member member;
+	String kakoIdByMember = "Kakao_TMP_05";
 
-	@BeforeEach
-	// @Transactional
+	// @BeforeEach
+	@Transactional
 	void setUp() {
 		member = memberRepository.save(Member.builder()
-			.kakaoId("Kakao_TMP_05")
+			.kakaoId(kakoIdByMember)
 			.nickname("테스트 5")
 			.role(Role.ROLE_FREEUSER)
 			.build());
 	}
 
 	@Test
-	// @Transactional
+	@Transactional
 	@DisplayName("타임캡슐 생성하기")
 	void saveCapsule() {
 		List<Capsule> capsuleList_1 = capsuleRepository.findAll();
 
 		String code = capsuleService.createRandomCode(8);
+		Member nowMember = memberRepository.findByKakaoId(kakoIdByMember)
+			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
 
 		capsuleRepository.save(Capsule.builder()
 			.title("캡슐 6")
 			.content("타임캡슐 입니다.")
-			.member(member)
+			.member(nowMember)
 			.capsuleCode(code)
 			.address("서울특별시 종로구 대학로12길 38 (동숭동)")
 			.latitude(37.582412965088F)
 			.longitude(127.00378236901F)
 			.unlockDate(LocalDate.now().plusDays(3))
+			.capsuleType(Role.ROLE_ADMIN == nowMember.getRole() ? 2 : 1)
 			.build());
 
 		List<Capsule> capsuleList_2 = capsuleRepository.findAll();
 
 		assertThat(capsuleList_2.size() - capsuleList_1.size()).isEqualTo(1);
+	}
+
+	@Test
+	@Transactional
+	@DisplayName("나의 타임캡슐 정보 가져오기")
+	void findMyCapsule() {
+		Optional<Member> nowMember = memberRepository.findByKakaoId(kakoIdByMember);
+		if(nowMember.isPresent()) {
+			List<CapsuleDTO> myCapsule = capsuleService.findMyCapsule(nowMember.get().getId());
+
+			// Then
+			assertThat(myCapsule).isNotEmpty();  // myCapsule이 비어있지 않은지 검증
+			assertThat(myCapsule).hasSizeGreaterThan(0);  // myCapsule 리스트의 크기가 0보다 큰지 검증
+
+			assertThat(myCapsule.get(0).getTitle()).isEqualTo("캡슐 6");
+		}
 	}
 }

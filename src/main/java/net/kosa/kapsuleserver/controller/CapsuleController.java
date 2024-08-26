@@ -1,10 +1,17 @@
 package net.kosa.kapsuleserver.controller;
 
+import java.util.List;
+import java.util.Objects;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import net.kosa.kapsuleserver.base.util.LoginUtil;
@@ -34,6 +41,18 @@ public class CapsuleController {
 		} else {
 			// TODO : 예외처리 수정
 			throw new RuntimeException();
+		}
+	}
+
+	@GetMapping("/{id}")
+	public ResponseEntity<?> findMyCapsule(@PathVariable Long id) {
+		Member member = loginUtil.getMember();
+
+		if (Objects.equals(member.getId(), id)) {
+			List<CapsuleDTO> myCapsuleList = capsuleService.findMyCapsule(id);
+			return ResponseEntity.ok(myCapsuleList);
+		} else {
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body("유저 정보가 올바르지 않습니다.");
 		}
 	}
 }
