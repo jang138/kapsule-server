@@ -32,7 +32,7 @@ public class CapsuleTests {
 	Member member;
 	String kakoIdByMember = "Kakao_TMP_05";
 
-	// @BeforeEach
+	@BeforeEach
 	@Transactional
 	void setUp() {
 		member = memberRepository.save(Member.builder()
