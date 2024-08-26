@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import net.kosa.kapsuleserver.base.util.LoginUtil;
 import net.kosa.kapsuleserver.dto.CapsuleDTO;
 import net.kosa.kapsuleserver.entity.Member;
 import net.kosa.kapsuleserver.service.CapsuleService;
@@ -23,13 +24,16 @@ import lombok.RequiredArgsConstructor;
 public class CapsuleController {
 
 	private final CapsuleService capsuleService;
+	private final LoginUtil loginUtil;
 
 	@PostMapping("/create")
 	public void saveCapsule(@RequestBody CapsuleDTO capsuleDTO) {
-		// TODO : 유저 존재하는지 확인 (로그인 유무 확인)
-		// 유저가 없는 경우 : RuntimeException
-		Member member = capsuleDTO.getMember();
-
-		capsuleService.saveCapsule(capsuleDTO, member);
+		if(loginUtil.isLogin()) {
+			Member member = loginUtil.getMember();
+			capsuleService.saveCapsule(capsuleDTO, member);
+		} else {
+			// TODO : 예외처리 수정
+			throw new RuntimeException();
+		}
 	}
 }

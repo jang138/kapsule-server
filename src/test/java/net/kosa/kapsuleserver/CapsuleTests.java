@@ -35,7 +35,7 @@ public class CapsuleTests {
 		member = memberRepository.save(Member.builder()
 			.kakaoId("Kakao_TMP_05")
 			.nickname("테스트 5")
-			.role(Role.FREE_USER)
+			.role(Role.ROLE_FREEUSER)
 			.build());
 	}
 
@@ -50,7 +50,7 @@ public class CapsuleTests {
 		capsuleRepository.save(Capsule.builder()
 			.title("캡슐 6")
 			.content("타임캡슐 입니다.")
-			.memberId(member)
+			.member(member)
 			.capsuleCode(code)
 			.address("서울특별시 종로구 대학로12길 38 (동숭동)")
 			.latitude(37.582412965088F)

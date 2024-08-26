@@ -29,7 +29,7 @@ public class CapsuleService {
 	@Transactional
 	public void saveCapsule(CapsuleDTO capsuleDTO, Member member) {
 		Capsule capsule = Capsule.builder()
-			.memberId(member)
+			.member(member)
 			.title(capsuleDTO.getTitle())
 			.content(capsuleDTO.getContent())
 			.address(capsuleDTO.getAddress())
