@@ -5,6 +5,7 @@ import java.time.LocalDate;
 
 import org.springframework.stereotype.Service;
 
+import net.kosa.kapsuleserver.base.entity.Role;
 import net.kosa.kapsuleserver.dto.CapsuleDTO;
 import net.kosa.kapsuleserver.entity.Capsule;
 import net.kosa.kapsuleserver.entity.Member;
@@ -22,7 +23,6 @@ import lombok.RequiredArgsConstructor;
 public class CapsuleService {
 
 	private final CapsuleRepository capsuleRepository;
-
 	private static final String CHARACTER_SET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 	private final SecureRandom random = new SecureRandom();
 
@@ -37,9 +37,15 @@ public class CapsuleService {
 			.latitude(capsuleDTO.getLatitude())
 			.unlockDate(capsuleDTO.getUnlockDate())
 			.capsuleCode(createRandomCode(8))
+			.capsuleType(member.getRole() == Role.ROLE_ADMIN ? 2 : 1)
 			.build();
 
 		capsuleRepository.save(capsule);
+	}
+
+	@Transactional
+	public void findMyCapsule() {
+
 	}
 
 	// CHARACTER_SET으로 구성된 난수를 생성하는 메소드

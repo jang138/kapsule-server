@@ -56,6 +56,7 @@ public class CapsuleTests {
 			.latitude(37.582412965088F)
 			.longitude(127.00378236901F)
 			.unlockDate(LocalDate.now().plusDays(3))
+			.capsuleType(member.getRole() == Role.ROLE_ADMIN ? 2 : 1)
 			.build());
 
 		List<Capsule> capsuleList_2 = capsuleRepository.findAll();
