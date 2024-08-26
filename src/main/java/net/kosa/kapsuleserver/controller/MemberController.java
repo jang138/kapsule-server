@@ -16,6 +16,10 @@ import java.util.Optional;
 public class MemberController {
     private final MemberRepository memberRepository;
 
+    /*
+    TODO: 추후 수정
+    */
+    
     @GetMapping("/user/profile")
     public String getUserProfile(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
