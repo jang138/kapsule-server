@@ -38,10 +38,10 @@ public class Member extends BaseEntity {
 	@Column(nullable = false)
 	private String nickname;
 
-	@Column(nullable = false)
+	@Column(nullable = false, unique = true)
 	private String kakaoId;
 
-	@Column(nullable = false, length = 10)
+	@Column(nullable = false, length = 15)
 	@Enumerated(EnumType.STRING)
 	private Role role;
 
