@@ -2,7 +2,6 @@ package net.kosa.kapsuleserver.controller;
 
 import java.util.List;
 import java.util.Objects;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -34,13 +33,21 @@ public class CapsuleController {
 	private final LoginUtil loginUtil;
 
 	@PostMapping("/create")
-	public void saveCapsule(@RequestBody CapsuleDTO capsuleDTO) {
-		if(loginUtil.isLogin()) {
-			Member member = loginUtil.getMember();
-			capsuleService.saveCapsule(capsuleDTO, member);
-		} else {
-			// TODO : 예외처리 수정
-			throw new RuntimeException();
+	public ResponseEntity<?> saveCapsule(@RequestBody CapsuleDTO capsuleDTO) {
+		try{
+			if(loginUtil.isLogin()) {
+				Member member = loginUtil.getMember();
+				capsuleService.saveCapsule(capsuleDTO, member);
+
+				return ResponseEntity.status(HttpStatus.CREATED)
+						.body("타임캡슐이 성공적으로 저장되었습니다.");
+			} else {
+				return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+						.body("로그인 상태를 확인해주세요.");
+			}
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body("타임캠슐 저장 중 오류가 발생했습니다.");
 		}
 	}
 

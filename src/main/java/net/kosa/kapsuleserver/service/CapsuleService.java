@@ -5,9 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 import org.springframework.stereotype.Service;
-
+import net.kosa.kapsuleserver.base.entity.Role;
 import net.kosa.kapsuleserver.dto.CapsuleDTO;
 import net.kosa.kapsuleserver.entity.Capsule;
 import net.kosa.kapsuleserver.entity.Member;
@@ -39,6 +38,7 @@ public class CapsuleService {
 			.latitude(capsuleDTO.getLatitude())
 			.unlockDate(capsuleDTO.getUnlockDate())
 			.capsuleCode(createRandomCode(8))
+			.capsuleType(member.getRole() == Role.ROLE_ADMIN ? 2 : 1)
 			.build();
 
 		capsuleRepository.save(capsule);
