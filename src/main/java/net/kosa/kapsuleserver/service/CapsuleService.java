@@ -2,6 +2,7 @@ package net.kosa.kapsuleserver.service;
 
 import java.security.SecureRandom;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import net.kosa.kapsuleserver.base.entity.Role;
@@ -50,6 +51,19 @@ public class CapsuleService {
 		return convertToDTO(capsuleList);
 	}
 
+	@Transactional
+	public void deleteCapsule(Long capsuleId, Member member) {
+		Capsule capsule = capsuleRepository.findById(capsuleId)
+				.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 타임캡슐입니다."));
+
+		if (!capsule.getMember().getKakaoId().equals(member.getKakaoId())) {
+			throw new SecurityException("타임캡슐을 삭제할 권한이 없습니다.");
+		}
+
+		capsuleRepository.deleteById(capsuleId);
+	}
+
+
 	// 캡슐 리스트를 DTO로 변환
 	public List<CapsuleDTO> convertToDTO(List<Capsule> capsuleList) {
 		return capsuleList.stream()
@@ -83,4 +97,5 @@ public class CapsuleService {
 
 		return code;
 	}
+
 }
