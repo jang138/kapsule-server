@@ -67,7 +67,7 @@ public class CapsuleController {
 
 	// 타임캡슐 삭제
 	@DeleteMapping("/{id}")
-	public ResponseEntity<?> deleteCapsule(@PathVariable Long capsuleId) {
+	public ResponseEntity<String> deleteCapsule(@PathVariable Long capsuleId) {
 		try {
 			if (!loginUtil.isLogin()) {
 				return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
