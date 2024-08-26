@@ -1,7 +1,6 @@
 package net.kosa.kapsuleserver.service;
 
 import java.security.SecureRandom;
-import java.time.LocalDate;
 
 import org.springframework.stereotype.Service;
 
