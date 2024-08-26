@@ -44,8 +44,8 @@ public class CapsuleService {
 
 	// 나의 타임 캡슐 조회
 	@Transactional
-	public List<CapsuleDTO> findMyCapsule(Long id) {
-		List<Capsule> capsuleList = capsuleRepository.findAllByMemberId(id);
+	public List<CapsuleDTO> findMyCapsule(Long memberId) {
+		List<Capsule> capsuleList = capsuleRepository.findAllByMemberId(memberId);
 
 		return convertToDTO(capsuleList);
 	}
