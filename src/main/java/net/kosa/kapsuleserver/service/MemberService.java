@@ -11,7 +11,7 @@ public class MemberService {
     @Autowired
     private MemberRepository memberRepository;
 
-    public Member getUserByKakaoId(String kakaoId) {
+    public Member getMemberByKakaoId(String kakaoId) {
         return memberRepository.findByKakaoId(kakaoId).get();
     }
 }

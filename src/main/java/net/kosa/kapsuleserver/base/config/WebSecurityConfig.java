@@ -26,7 +26,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.io.IOException;
 
-@Configurable
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -49,23 +48,22 @@ public class WebSecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(reqeust -> reqeust
-//                        .requestMatchers("/", "/api/v1/auth/**", "/oauth2/**", "/user/profile").permitAll()
-//                        .requestMatchers("/api/v1/user/**").hasRole("FREEUSER")
-//                        .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
-                                .requestMatchers("/**").permitAll()
+                        .requestMatchers("/", "/api/v1/auth/**", "/oauth2/**").permitAll()
+                        .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/v1/user/**").hasRole("FREEUSER")
+//                                .requestMatchers("/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
-                        .authorizationEndpoint(endpoint -> endpoint.baseUri("/api/v1/auth/oauth2"))
+//                        .authorizationEndpoint(endpoint -> endpoint.baseUri("/api/v1/auth/oauth2"))
+                        .authorizationEndpoint(endpoint -> endpoint.baseUri("/oauth2"))
                         .redirectionEndpoint(endpoint -> endpoint.baseUri("/oauth2/callback/*"))
                         .userInfoEndpoint(endpoint -> endpoint.userService(defaultOAuth2UserService ))
                         .successHandler(oAuth2SuccessHandler)
                 )
-
-
-//                .exceptionHandling(exceptionHandling -> exceptionHandling
-//                        .authenticationEntryPoint(new FailedAuthenticationEntryPoint())
-//                )
+                .exceptionHandling(exceptionHandling -> exceptionHandling
+                        .authenticationEntryPoint(new FailedAuthenticationEntryPoint())
+                )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return httpSecurity.build();
@@ -91,6 +89,7 @@ class FailedAuthenticationEntryPoint implements AuthenticationEntryPoint {
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         response.setContentType("application/json");
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-        response.getWriter().write("{\"code: \"NP\", \"message\" : \"No Permission.\"}");
+        response.getWriter().write("{\"code\": \"NP\", \"message\": \"No Permission.\"}");
+
     }
 }

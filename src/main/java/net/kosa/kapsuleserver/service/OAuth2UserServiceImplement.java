@@ -24,7 +24,6 @@ public class OAuth2UserServiceImplement extends DefaultOAuth2UserService {
     @Override
     public OAuth2User loadUser(OAuth2UserRequest request) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(request);
-        String oauthClientName = request.getClientRegistration().getClientName();
         try{
             System.out.println(new ObjectMapper().writeValueAsString(oAuth2User.getAttributes()));
         } catch (Exception e){
@@ -34,20 +33,9 @@ public class OAuth2UserServiceImplement extends DefaultOAuth2UserService {
         String kakaoId = oAuth2User.getAttributes().get("id").toString();
         String nickname = ((Map<String, Object>) oAuth2User.getAttributes().get("properties")).get("nickname").toString();
 
-//        Member member = Member.builder()
-//                .kakaoId(kakaoId)
-//                .nickname(nickname)
-//                .role(Role.ROLE_FREEUSER)  // 기본 역할 설정
-//                .build();
-//
-//        memberRepository.save(member);
-
         Optional<Member> existingMember = memberRepository.findByKakaoId(kakaoId);
-
         Member member;
-        if (existingMember.isPresent()) {
-            member = existingMember.get();
-        } else {
+        if (existingMember.isEmpty()) {
             member = Member.builder()
                     .kakaoId(kakaoId)
                     .nickname(nickname)
