@@ -6,7 +6,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum Role {
-	ADMIN("관리자"), FREE_USER("무료회원"), PAID_USER("유료회원");
+	ROLE_ADMIN("관리자"), ROLE_FREEUSER("무료회원"), ROLE_PAIDUSER("유료회원");
 
 	private final String value;
 }
