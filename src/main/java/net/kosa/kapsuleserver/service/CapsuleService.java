@@ -73,6 +73,7 @@ public class CapsuleService {
 
 		do {
 			StringBuilder codeBuilder = new StringBuilder(length);
+
 			for(int i = 0; i < length; i++) {
 				int idx = random.nextInt(CHARACTER_SET.length());
 				codeBuilder.append(CHARACTER_SET.charAt(idx));
