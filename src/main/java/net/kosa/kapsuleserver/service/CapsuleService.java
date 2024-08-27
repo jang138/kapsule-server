@@ -2,7 +2,6 @@ package net.kosa.kapsuleserver.service;
 
 import java.security.SecureRandom;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import net.kosa.kapsuleserver.base.entity.Role;
@@ -87,6 +86,7 @@ public class CapsuleService {
 
 		do {
 			StringBuilder codeBuilder = new StringBuilder(length);
+
 			for(int i = 0; i < length; i++) {
 				int idx = random.nextInt(CHARACTER_SET.length());
 				codeBuilder.append(CHARACTER_SET.charAt(idx));
