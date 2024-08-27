@@ -28,12 +28,20 @@ import java.io.IOException;
 
 @Configuration
 @EnableWebSecurity
-@RequiredArgsConstructor
 public class WebSecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final DefaultOAuth2UserService defaultOAuth2UserService;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
+
+    public WebSecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter
+            , DefaultOAuth2UserService defaultOAuth2UserService
+            , OAuth2SuccessHandler oAuth2SuccessHandler
+    ) {
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.defaultOAuth2UserService = defaultOAuth2UserService;
+        this.oAuth2SuccessHandler = oAuth2SuccessHandler;
+    }
 
     @Bean
     protected SecurityFilterChain configure(HttpSecurity httpSecurity, CorsConfigurationSource corsConfigurationSource) throws Exception {
@@ -48,22 +56,24 @@ public class WebSecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(reqeust -> reqeust
-                        .requestMatchers("/", "/api/v1/auth/**", "/oauth2/**").permitAll()
-                        .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/api/v1/user/**").hasRole("FREEUSER")
-//                                .requestMatchers("/**").permitAll()
-                        .anyRequest().authenticated()
+//                        .requestMatchers("/", "/api/v1/auth/**", "/oauth2/**", "/user/info").permitAll()
+//                        .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
+//                        .requestMatchers("/api/v1/user/**").hasRole("FREEUSER")
+                                .requestMatchers("/**").permitAll()
+                                .requestMatchers("/api/v1/user-info").authenticated() // 인증된 사용자만 접근 허용
+
+                                .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
-//                        .authorizationEndpoint(endpoint -> endpoint.baseUri("/api/v1/auth/oauth2"))
-                        .authorizationEndpoint(endpoint -> endpoint.baseUri("/oauth2"))
+                        .authorizationEndpoint(endpoint -> endpoint.baseUri("/api/v1/auth/oauth2"))
+//                        .authorizationEndpoint(endpoint -> endpoint.baseUri("/oauth2"))
                         .redirectionEndpoint(endpoint -> endpoint.baseUri("/oauth2/callback/*"))
                         .userInfoEndpoint(endpoint -> endpoint.userService(defaultOAuth2UserService ))
                         .successHandler(oAuth2SuccessHandler)
                 )
-                .exceptionHandling(exceptionHandling -> exceptionHandling
-                        .authenticationEntryPoint(new FailedAuthenticationEntryPoint())
-                )
+//                .exceptionHandling(exceptionHandling -> exceptionHandling
+//                        .authenticationEntryPoint(new FailedAuthenticationEntryPoint())
+//                )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return httpSecurity.build();
