@@ -7,5 +7,6 @@ import net.kosa.kapsuleserver.entity.Capsule;
 
 public interface CapsuleRepository extends JpaRepository<Capsule, Long> {
 	boolean existsByCapsuleCode(String capsuleCode);
-	List<Capsule> findAllByMemberId(Long id);
+
+	List<Capsule> findAllByMemberId(Long memberId);
 }

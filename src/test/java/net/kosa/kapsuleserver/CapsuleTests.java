@@ -84,4 +84,18 @@ public class CapsuleTests {
 			assertThat(myCapsule.get(0).getTitle()).isEqualTo("캡슐 6");
 		}
 	}
+
+	@Test
+	@Transactional
+	@DisplayName("타임캡슐 삭제하기")
+	void deleteCapsule() {
+		Member nowMember = memberRepository.findByKakaoId(kakoIdByMember)
+				.orElseThrow(IllegalArgumentException::new);
+
+		List<CapsuleDTO> myCapsule_before = capsuleService.findMyCapsule(nowMember.getId());
+		capsuleService.deleteCapsule(myCapsule_before.get(0).getId(), nowMember);
+		List<CapsuleDTO> myCapsule_after = capsuleService.findMyCapsule(nowMember.getId());
+
+		assertThat(myCapsule_before.size() - myCapsule_after.size()).isEqualTo(1);
+	}
 }
