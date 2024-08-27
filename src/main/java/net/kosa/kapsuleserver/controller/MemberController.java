@@ -22,9 +22,16 @@ public class MemberController {
 
     private final MemberService memberService;
 
+    /*
+    Vue에서
+    headers: {
+        Authorization: `Bearer ${token}`,
+    }
+    형태로 보낸 요청에서 Authentication authentication의 getPrincipal()로 kakaoId 사용 가능
+     */
     @GetMapping("/user-info")
     public ResponseEntity<Member> getUserInfo(Authentication authentication) {
-        String kakaoId = (String) authentication.getPrincipal(); // 인증된 사용자의 kakaoId
+        String kakaoId = (String) authentication.getPrincipal();
         Member member = memberService.getMemberByKakaoId(kakaoId);
         return ResponseEntity.ok(member);
     }

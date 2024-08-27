@@ -36,21 +36,27 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         try{
+            String authHeader = request.getHeader("Authorization");
+            System.out.println("Authorization header: " + authHeader);
+
             String token = parseBearerToken(request);
             if(token == null) {
                 filterChain.doFilter(request, response);
+                System.out.println("parseBearerToken null aaaaaaaaaaaaaaaa");
                 return;
             }
 
             String kakaoId = jwtProvider.validate(token);
             if(kakaoId == null){
                 filterChain.doFilter(request, response);
+                System.out.println("jwtProvider null bbbbbbbbbbbbbbbbb");
                 return;
             }
 
             Optional<Member> member = memberRepository.findByKakaoId(kakaoId);
             if(member.isEmpty()){
                 filterChain.doFilter(request, response);
+                System.out.println("memberRepository null cccccccccccccccccc");
                 return;
             }
 

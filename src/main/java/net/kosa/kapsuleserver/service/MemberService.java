@@ -21,14 +21,4 @@ public class MemberService {
         return memberRepository.findByKakaoId(kakaoId)
                 .orElseThrow(() -> new NoSuchElementException("Member not found with kakaoId: " + kakaoId));
     }
-
-    public Member getMemberByToken(String token) {
-        String kakaoId = jwtUtil.getKakaoIdFromJwt(token);
-        if (kakaoId == null) {
-            throw new IllegalArgumentException("Invalid JWT Token");
-        }
-
-        Optional<Member> memberOpt = memberRepository.findByKakaoId(kakaoId);
-        return memberOpt.orElseThrow(() -> new IllegalArgumentException("Member not found for kakaoId: " + kakaoId));
-    }
 }

@@ -47,4 +47,8 @@ public class Member extends BaseEntity {
 
 	@OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
 	private List<SharedKey> sharedKeys;
+
+	public void setKakaoId(String kakaoId) {
+
+	}
 }
