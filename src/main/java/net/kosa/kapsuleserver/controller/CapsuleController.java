@@ -5,7 +5,10 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import net.kosa.kapsuleserver.base.util.LoginUtil;
 import net.kosa.kapsuleserver.dto.CapsuleDTO;
@@ -50,18 +53,19 @@ public class CapsuleController {
 	@GetMapping("/list")
 	public ResponseEntity<?> findMyCapsule() {
 		try {
-			if (loginUtil.isLogin()) {
-				Member member = loginUtil.getMember();
-				List<CapsuleDTO> myCapsule = capsuleService.findMyCapsule(member.getId());
-
-				return ResponseEntity.ok(myCapsule);
-			} else {
+			if (!loginUtil.isLogin()) {
 				return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-					.body("로그인 상태를 확인해주세요.");
+						.body("로그인 상태를 확인해주세요.");
 			}
+
+			Member member = loginUtil.getMember();
+			List<CapsuleDTO> myCapsule = capsuleService.findMyCapsule(member.getId());
+
+			return ResponseEntity.ok(myCapsule);
+
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-				.body("타임캠슐 조회 중 오류가 발생했습니다.");
+					.body("타임캠슐 조회 중 오류가 발생했습니다.");
 		}
 	}
 
