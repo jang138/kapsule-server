@@ -1,0 +1,8 @@
+yong_high = (description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1522)(host=adb.ap-chuncheon-1.oraclecloud.com))(connect_data=(service_name=gd5daa4a0b75057_yong_high.adb.oraclecloud.com))(security=(ssl_server_dn_match=yes)))
+
+yong_low = (description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1522)(host=adb.ap-chuncheon-1.oraclecloud.com))(connect_data=(service_name=gd5daa4a0b75057_yong_low.adb.oraclecloud.com))(security=(ssl_server_dn_match=yes)))
+
+yong_medium = (description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1522)(host=adb.ap-chuncheon-1.oraclecloud.com))(connect_data=(service_name=gd5daa4a0b75057_yong_medium.adb.oraclecloud.com))(security=(ssl_server_dn_match=yes)))
+
+
+

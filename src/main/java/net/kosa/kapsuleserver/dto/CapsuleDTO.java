@@ -2,6 +2,8 @@ package net.kosa.kapsuleserver.dto;
 
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
 import net.kosa.kapsuleserver.entity.Member;
 
 import lombok.Builder;
@@ -15,14 +17,33 @@ import lombok.Getter;
 @Builder
 public class CapsuleDTO {
 
-	private Long id;
-	private Member member;
-	private String title;
-	private String content;
+	@JsonProperty("location")
 	private String address;
-	private Float longitude;
-	private Float latitude;
+
+	private Long id;
+	private String title;
 	private LocalDate unlockDate;
 	private String capsuleCode;
+	private int capsuleType;
+	private String image;
 
+	private Member member;
+	private Coordinates coordinates;  // 좌표 정보 추가
+	private Content content;
+
+	// 내부 클래스 정의
+	@Getter
+	@Builder
+	public static class Coordinates {
+		private Float lat;
+		private Float lng;
+	}
+
+	@Getter
+	@Builder
+	public static class Content {
+		private String daterange;
+		private String subtitle;
+		private String text;
+	}
 }

@@ -9,4 +9,7 @@ public interface CapsuleRepository extends JpaRepository<Capsule, Long> {
 	boolean existsByCapsuleCode(String capsuleCode);
 
 	List<Capsule> findAllByMemberId(Long memberId);
+
+	// 랜드마크 데이터인지 구분
+	List<Capsule> findByCapsuleType(int capsuleType);
 }

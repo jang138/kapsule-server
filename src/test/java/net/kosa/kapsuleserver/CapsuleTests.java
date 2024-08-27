@@ -30,15 +30,15 @@ public class CapsuleTests {
 	@Autowired private CapsuleRepository capsuleRepository;
 
 	Member member;
-	String kakoIdByMember = "Kakao_TMP_05";
+	String kakoIdByMember = "Kakao_TMP_06";
 
 	@BeforeEach
 	@Transactional
 	void setUp() {
 		member = memberRepository.save(Member.builder()
 			.kakaoId(kakoIdByMember)
-			.nickname("테스트 5")
-			.role(Role.ROLE_FREEUSER)
+			.nickname("관리자")
+			.role(Role.ROLE_ADMIN)
 			.build());
 	}
 
