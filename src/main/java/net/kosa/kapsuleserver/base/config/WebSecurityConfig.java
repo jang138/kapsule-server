@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import net.kosa.kapsuleserver.base.filter.JwtAuthenticationFilter;
 import net.kosa.kapsuleserver.base.handler.OAuth2SuccessHandler;
+import net.kosa.kapsuleserver.base.interceptor.JwtInterceptor;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,18 +24,27 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.io.IOException;
 
-@Configurable
 @Configuration
 @EnableWebSecurity
-@RequiredArgsConstructor
-public class WebSecurityConfig {
+public class WebSecurityConfig implements WebMvcConfigurer {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final DefaultOAuth2UserService defaultOAuth2UserService;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
+
+    public WebSecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter
+            , DefaultOAuth2UserService defaultOAuth2UserService
+            , OAuth2SuccessHandler oAuth2SuccessHandler
+    ) {
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.defaultOAuth2UserService = defaultOAuth2UserService;
+        this.oAuth2SuccessHandler = oAuth2SuccessHandler;
+    }
 
     @Bean
     protected SecurityFilterChain configure(HttpSecurity httpSecurity, CorsConfigurationSource corsConfigurationSource) throws Exception {
@@ -49,11 +59,13 @@ public class WebSecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(reqeust -> reqeust
-//                        .requestMatchers("/", "/api/v1/auth/**", "/oauth2/**", "/user/profile").permitAll()
-//                        .requestMatchers("/api/v1/user/**").hasRole("FREEUSER")
+//                        .requestMatchers("/", "/api/v1/auth/**", "/oauth2/**", "/user/info").permitAll()
 //                        .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
+//                        .requestMatchers("/api/v1/user/**").hasRole("FREEUSER")
                                 .requestMatchers("/**").permitAll()
-                        .anyRequest().authenticated()
+                                .requestMatchers("/api/v1/user-info").authenticated() // 인증된 사용자만 접근 허용
+
+                                .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
                         .authorizationEndpoint(endpoint -> endpoint.baseUri("/api/v1/auth/oauth2"))
@@ -61,11 +73,9 @@ public class WebSecurityConfig {
                         .userInfoEndpoint(endpoint -> endpoint.userService(defaultOAuth2UserService ))
                         .successHandler(oAuth2SuccessHandler)
                 )
-
-
-//                .exceptionHandling(exceptionHandling -> exceptionHandling
-//                        .authenticationEntryPoint(new FailedAuthenticationEntryPoint())
-//                )
+                .exceptionHandling(exceptionHandling -> exceptionHandling
+                        .authenticationEntryPoint(new FailedAuthenticationEntryPoint())
+                )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return httpSecurity.build();
@@ -91,6 +101,6 @@ class FailedAuthenticationEntryPoint implements AuthenticationEntryPoint {
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         response.setContentType("application/json");
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-        response.getWriter().write("{\"code: \"NP\", \"message\" : \"No Permission.\"}");
+        response.getWriter().write("{\"code\": \"NP\", \"message\": \"No Permission.\"}");
     }
 }
