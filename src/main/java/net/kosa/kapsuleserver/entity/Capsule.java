@@ -64,7 +64,7 @@ public class Capsule extends BaseEntity {
 	@JoinColumn(name = "MEMBER_ID", nullable = false)
 	private Member member;
 
-	@OneToMany(mappedBy = "capsule", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "capsule", cascade = CascadeType.REMOVE)
 	private List<SharedKey> sharedKeys;
 
 }

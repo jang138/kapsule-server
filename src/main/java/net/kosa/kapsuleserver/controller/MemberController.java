@@ -1,6 +1,7 @@
 package net.kosa.kapsuleserver.controller;
 
 import lombok.RequiredArgsConstructor;
+import net.kosa.kapsuleserver.dto.MemberDTO;
 import net.kosa.kapsuleserver.entity.Member;
 import net.kosa.kapsuleserver.repository.MemberRepository;
 import net.kosa.kapsuleserver.service.MemberService;
@@ -36,9 +37,8 @@ public class MemberController {
         return ResponseEntity.ok(member);
     }
 
-    @PostMapping("/member-info")
-    public ResponseEntity<Member> getMemberByKakaoId(@RequestBody Map<String, String> request) {
-        String kakaoId = request.get("kakaoId");
+    @GetMapping("/member-info")
+    public ResponseEntity<MemberDTO> getMemberByKakaoId(@RequestAttribute("kakaoId") String kakaoId) {
         if (kakaoId == null) {
             return ResponseEntity.badRequest().build();
         }
@@ -48,6 +48,20 @@ public class MemberController {
             return ResponseEntity.notFound().build();
         }
 
+        // Member를 MemberDTO로 변환
+        MemberDTO memberDTO = MemberDTO.builder()
+                .id(member.getId())
+                .nickname(member.getNickname())
+                .kakaoId(member.getKakaoId())
+                .role(String.valueOf(member.getRole()))
+                .build();
+
+        return ResponseEntity.ok(memberDTO);
+    }
+
+    @GetMapping("/member/info")
+    public ResponseEntity<Member> getMember(@RequestAttribute("kakaoId") String kakaoId) {
+        Member member = memberService.getMemberByKakaoId(kakaoId);
         return ResponseEntity.ok(member);
     }
 }

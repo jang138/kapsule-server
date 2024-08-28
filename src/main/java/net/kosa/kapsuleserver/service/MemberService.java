@@ -15,7 +15,6 @@ import java.util.Optional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
-    private final JwtUtil jwtUtil;
 
     public Member getMemberByKakaoId(String kakaoId) {
         return memberRepository.findByKakaoId(kakaoId)
