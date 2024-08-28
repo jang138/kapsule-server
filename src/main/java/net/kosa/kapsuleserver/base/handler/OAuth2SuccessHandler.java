@@ -6,9 +6,12 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import net.kosa.kapsuleserver.base.provider.JwtProvider;
 import net.kosa.kapsuleserver.entity.CustomOAuth2User;
+import net.kosa.kapsuleserver.entity.Member;
+import net.kosa.kapsuleserver.service.MemberService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 
@@ -17,8 +20,10 @@ import java.io.IOException;
 public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final JwtProvider jwtProvider;
+    private final MemberService memberService;
 
     @Override
+    @Transactional
     public void onAuthenticationSuccess(
             HttpServletRequest request,
             HttpServletResponse response,
@@ -26,8 +31,13 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     ) throws IOException, ServletException {
         CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
         String kakaoId = oAuth2User.getName();
-        String token = jwtProvider.create(kakaoId);
+        Member member = memberService.getMemberByKakaoId(kakaoId);
+        String role = String.valueOf(member.getRole());
+        String token = jwtProvider.create(kakaoId, role);
+
+        logger.info("token " + token);
 
         response.sendRedirect("https://localhost:8080/auth/oauth-response/" + token + "/3600");
+
     }
 }

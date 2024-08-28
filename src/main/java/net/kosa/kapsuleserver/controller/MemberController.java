@@ -3,48 +3,51 @@ package net.kosa.kapsuleserver.controller;
 import lombok.RequiredArgsConstructor;
 import net.kosa.kapsuleserver.entity.Member;
 import net.kosa.kapsuleserver.repository.MemberRepository;
+import net.kosa.kapsuleserver.service.MemberService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
 import java.util.Optional;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
+@RequestMapping("/api/v1")
 public class MemberController {
-    private final MemberRepository memberRepository;
+
+    private final MemberService memberService;
 
     /*
-    TODO: 추후 수정
-    */
-    
-    @GetMapping("/user/profile")
-    public String getUserProfile(Model model) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Object principal = authentication.getPrincipal();
-
-        if (principal instanceof String) {
-            String kakaoId = (String) principal;
-            Optional<Member> member = memberRepository.findByKakaoId(kakaoId);
-            if (member.isPresent()) {
-                model.addAttribute("user", member.get());
-            } else {
-                return "redirect:/";
-            }
-        } else if (principal instanceof Member) {
-            Member member = (Member) principal;
-            model.addAttribute("user", member);
-        } else {
-            return "redirect:/";
-        }
-        return "member-info"; // user/profile.html 페이지로 이동
+    Vue에서
+    headers: {
+        Authorization: `Bearer ${token}`,
+    }
+    형태로 보낸 요청에서 Authentication authentication의 getPrincipal()로 kakaoId 사용 가능
+     */
+    @GetMapping("/user-info")
+    public ResponseEntity<Member> getUserInfo(Authentication authentication) {
+        String kakaoId = (String) authentication.getPrincipal();
+        Member member = memberService.getMemberByKakaoId(kakaoId);
+        return ResponseEntity.ok(member);
     }
 
-    @GetMapping("/logout")
-    public String logout() {
-        // Spring Security에서 제공하는 로그아웃 URL로 리다이렉트
-        return "redirect:/perform_logout";
+    @PostMapping("/member-info")
+    public ResponseEntity<Member> getMemberByKakaoId(@RequestBody Map<String, String> request) {
+        String kakaoId = request.get("kakaoId");
+        if (kakaoId == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        Member member = memberService.getMemberByKakaoId(kakaoId);
+        if (member == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(member);
     }
 }
