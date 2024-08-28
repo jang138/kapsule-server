@@ -1,7 +1,9 @@
 package net.kosa.kapsuleserver.service;
 
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import net.kosa.kapsuleserver.base.util.JwtUtil;
+
 import net.kosa.kapsuleserver.entity.Member;
 import net.kosa.kapsuleserver.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +17,15 @@ import java.util.Optional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
-    private final JwtUtil jwtUtil;
 
     public Member getMemberByKakaoId(String kakaoId) {
         return memberRepository.findByKakaoId(kakaoId)
                 .orElseThrow(() -> new NoSuchElementException("Member not found with kakaoId: " + kakaoId));
+    }
+
+    public Long getIdByKakaoId(String kakaoId) {
+        Member member = memberRepository.findByKakaoId(kakaoId)
+            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+        return member.getId();
     }
 }
