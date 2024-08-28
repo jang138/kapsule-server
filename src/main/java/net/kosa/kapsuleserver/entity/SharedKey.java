@@ -2,6 +2,7 @@ package net.kosa.kapsuleserver.entity;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
@@ -35,11 +36,13 @@ public class SharedKey implements Serializable {
 	@ManyToOne
 	@MapsId("memberId")
 	@JoinColumn(name = "MEMBER_ID", nullable = false)
+	@JsonBackReference // 순환 참조 방지
 	private Member member;
 
 	@ManyToOne
 	@MapsId("capsuleId")
 	@JoinColumn(name = "CAPSULE_ID", nullable = false)
+	@JsonBackReference // 순환 참조 방지
 	private Capsule capsule;
 
 }

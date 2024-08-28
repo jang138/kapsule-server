@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import net.kosa.kapsuleserver.base.filter.JwtAuthenticationFilter;
 import net.kosa.kapsuleserver.base.handler.OAuth2SuccessHandler;
 import net.kosa.kapsuleserver.base.interceptor.JwtInterceptor;
+import net.kosa.kapsuleserver.service.OAuth2UserServiceImplement;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,15 +35,15 @@ import java.io.IOException;
 public class WebSecurityConfig implements WebMvcConfigurer {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final DefaultOAuth2UserService defaultOAuth2UserService;
+    private final OAuth2UserServiceImplement oAuth2UserService;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
 
     public WebSecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter
-            , DefaultOAuth2UserService defaultOAuth2UserService
+            , OAuth2UserServiceImplement oAuth2UserService
             , OAuth2SuccessHandler oAuth2SuccessHandler
     ) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
-        this.defaultOAuth2UserService = defaultOAuth2UserService;
+        this.oAuth2UserService = oAuth2UserService;
         this.oAuth2SuccessHandler = oAuth2SuccessHandler;
     }
 
@@ -70,7 +71,7 @@ public class WebSecurityConfig implements WebMvcConfigurer {
                 .oauth2Login(oauth2 -> oauth2
                         .authorizationEndpoint(endpoint -> endpoint.baseUri("/api/v1/auth/oauth2"))
                         .redirectionEndpoint(endpoint -> endpoint.baseUri("/oauth2/callback/*"))
-                        .userInfoEndpoint(endpoint -> endpoint.userService(defaultOAuth2UserService ))
+                        .userInfoEndpoint(endpoint -> endpoint.userService(oAuth2UserService))
                         .successHandler(oAuth2SuccessHandler)
                 )
                 .exceptionHandling(exceptionHandling -> exceptionHandling
