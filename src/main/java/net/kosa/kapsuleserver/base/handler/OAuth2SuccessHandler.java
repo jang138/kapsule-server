@@ -31,9 +31,10 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     ) throws IOException, ServletException {
         CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
         String kakaoId = oAuth2User.getName();
+        String profileImageUrl = oAuth2User.getProfileImageUrl();
         Member member = memberService.getMemberByKakaoId(kakaoId);
         String role = String.valueOf(member.getRole());
-        String token = jwtProvider.create(kakaoId, role);
+        String token = jwtProvider.create(kakaoId, role, profileImageUrl);
 
         logger.info("token " + token);
 
