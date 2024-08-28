@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import net.kosa.kapsuleserver.base.entity.Role;
 import net.kosa.kapsuleserver.dto.CapsuleDTO;
+import net.kosa.kapsuleserver.dto.CapsuleDetailDTO;
 import net.kosa.kapsuleserver.entity.Capsule;
 import net.kosa.kapsuleserver.entity.Member;
 import net.kosa.kapsuleserver.repository.CapsuleRepository;
@@ -36,8 +37,8 @@ public class CapsuleService {
 	@Transactional
 	public void saveCapsule(CapsuleDTO capsuleDTO, Member member) {
 		// Capsule 엔티티 생성
-		Capsule capsule = Capsule.builder()	
-			.member(member)
+		Capsule capsule = Capsule.builder()
+				.member(member)
 			.title(capsuleDTO.getTitle())
 			.content(capsuleDTO.getContent())
 			.address(capsuleDTO.getAddress())
@@ -71,7 +72,7 @@ public class CapsuleService {
 	public void deleteCapsule(Long capsuleId, Member member) {
 		// ID로 타임캡슐 조회
 		Capsule capsule = capsuleRepository.findById(capsuleId)
-			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 타임캡슐입니다."));
+				.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 타임캡슐입니다."));
 
 		// 멤버가 해당 캡슐의 소유자인지 확인
 		if (!capsule.getMember().getKakaoId().equals(member.getKakaoId())) {
@@ -121,4 +122,21 @@ public class CapsuleService {
 		return code;
 	}
 
+	/* 타임캡슐 디테일 페이지 : 캡슐 ID로 캡슐 조회 */
+	@Transactional
+	public CapsuleDetailDTO findCapsuleById(Long capsuleId) {
+		Capsule capsule = capsuleRepository.findById(capsuleId)
+				.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 타임캡슐입니다."));
+
+		return CapsuleDetailDTO.builder()
+				.id(capsule.getId())
+				.title(capsule.getTitle())
+				.content(capsule.getContent())
+				.address(capsule.getAddress())
+				.longitude(capsule.getLongitude())
+				.latitude(capsule.getLatitude())
+				.unlockDate(capsule.getUnlockDate())
+				.capsuleType(capsule.getCapsuleType())
+				.build();
+	}
 }

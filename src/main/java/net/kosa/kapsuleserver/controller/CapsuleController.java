@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import net.kosa.kapsuleserver.base.util.LoginUtil;
 import net.kosa.kapsuleserver.dto.CapsuleDTO;
+import net.kosa.kapsuleserver.dto.CapsuleDetailDTO;
 import net.kosa.kapsuleserver.entity.Member;
 import net.kosa.kapsuleserver.service.CapsuleService;
 
@@ -88,6 +89,30 @@ public class CapsuleController {
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 					.body("타임캡슐 삭제 중 오류가 발생했습니다.");
+		}
+	}
+
+	// 캡슐 ID로 상세 조회
+	@GetMapping("/{id}")
+	@ResponseBody
+	public ResponseEntity<?> getCapsuleDetail(@PathVariable Long id) {
+		try {
+			if (!loginUtil.isLogin()) {
+				return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+						.body("로그인 상태를 확인해주세요.");
+			}
+
+			CapsuleDetailDTO capsuleDetail = capsuleService.findCapsuleById(id);
+
+			return ResponseEntity.ok(capsuleDetail);
+
+		} catch (IllegalArgumentException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+					.body(e.getMessage());
+
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body("타임캡슐 조회 중 오류가 발생했습니다.");
 		}
 	}
 }
