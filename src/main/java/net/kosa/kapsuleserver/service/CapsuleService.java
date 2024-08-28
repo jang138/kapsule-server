@@ -3,8 +3,6 @@ package net.kosa.kapsuleserver.service;
 import java.security.SecureRandom;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 import net.kosa.kapsuleserver.base.entity.Role;
 import net.kosa.kapsuleserver.dto.CapsuleDTO;
@@ -32,12 +30,10 @@ public class CapsuleService {
 		Capsule capsule = Capsule.builder()
 				.member(member)
 				.title(capsuleDTO.getTitle())
-				.content("{\"daterange\": \"" + capsuleDTO.getContent().getDaterange() + "\","
-						+ " \"subtitle\": \"" + capsuleDTO.getContent().getSubtitle() + "\","
-						+ " \"text\": \"" + capsuleDTO.getContent().getText() + "\"}")
+				.content(capsuleDTO.getContent())
 				.address(capsuleDTO.getAddress())
-				.longitude(capsuleDTO.getCoordinates().getLng())
-				.latitude(capsuleDTO.getCoordinates().getLat())
+				.longitude(capsuleDTO.getLongitude())
+				.latitude(capsuleDTO.getLatitude())
 				.unlockDate(capsuleDTO.getUnlockDate())
 				.capsuleCode(createRandomCode(8))
 				.capsuleType(member.getRole() == Role.ROLE_ADMIN ? 2 : 1)
@@ -50,9 +46,8 @@ public class CapsuleService {
 	@Transactional
 	public List<CapsuleDTO> findMyCapsule(Long memberId) {
 		List<Capsule> capsuleList = capsuleRepository.findAllByMemberId(memberId);
-		return capsuleList.stream()
-				.map(this::convertToDTO)
-				.collect(Collectors.toList());
+
+		return convertToDTO(capsuleList);
 	}
 
 	@Transactional
@@ -68,31 +63,21 @@ public class CapsuleService {
 	}
 
 
-
-	// 단일 캡슐을 DTO로 변환
-	private CapsuleDTO convertToDTO(Capsule capsule) {
-		ObjectMapper objectMapper = new ObjectMapper();  // Jackson ObjectMapper를 사용해 JSON 문자열을 객체로 변환
-		CapsuleDTO.Content content = null;
-		try {
-			content = objectMapper.readValue(capsule.getContent(), CapsuleDTO.Content.class);  // JSON 문자열을 CapsuleDTO.Content 객체로 변환
-		} catch (Exception e) {
-			// 예외 처리: JSON 파싱 실패 시 로깅하거나 적절한 조치를 취할 수 있습니다.
-			e.printStackTrace();
-		}
-
-		return CapsuleDTO.builder()
-				.id(capsule.getId())
-				.member(capsule.getMember())
-				.title(capsule.getTitle())
-				.content(content)  // 변환된 content 객체를 설정
-				.address(capsule.getAddress())
-				.capsuleCode(capsule.getCapsuleCode())
-				.unlockDate(capsule.getUnlockDate())
-				.coordinates(CapsuleDTO.Coordinates.builder()
-						.lat(capsule.getLatitude())
-						.lng(capsule.getLongitude())
+	// 캡슐 리스트를 DTO로 변환
+	private List<CapsuleDTO> convertToDTO(List<Capsule> capsuleList) {
+		return capsuleList.stream()
+				.map(capsule -> CapsuleDTO.builder()
+						.id(capsule.getId())
+						.member(capsule.getMember())
+						.title(capsule.getTitle())
+						.content(capsule.getContent())
+						.address(capsule.getAddress())
+						.longitude(capsule.getLongitude())
+						.latitude(capsule.getLatitude())
+						.unlockDate(capsule.getUnlockDate())
+						.capsuleCode(capsule.getCapsuleCode())
 						.build())
-				.build();
+				.collect(Collectors.toList());
 	}
 
 	// CHARACTER_SET으로 구성된 난수를 생성하는 메소드

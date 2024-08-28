@@ -30,16 +30,16 @@ public class CapsuleTests {
 	@Autowired private CapsuleRepository capsuleRepository;
 
 	Member member;
-	String kakoIdByMember = "Kakao_TMP_06";
+	String kakoIdByMember = "Kakao_TMP_05";
 
 	@BeforeEach
 	@Transactional
 	void setUp() {
 		member = memberRepository.save(Member.builder()
-			.kakaoId(kakoIdByMember)
-			.nickname("관리자")
-			.role(Role.ROLE_ADMIN)
-			.build());
+				.kakaoId(kakoIdByMember)
+				.nickname("테스트 5")
+				.role(Role.ROLE_FREEUSER)
+				.build());
 	}
 
 	@Test
@@ -50,19 +50,19 @@ public class CapsuleTests {
 
 		String code = capsuleService.createRandomCode(8);
 		Member nowMember = memberRepository.findByKakaoId(kakoIdByMember)
-			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+				.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
 
 		capsuleRepository.save(Capsule.builder()
-			.title("캡슐 6")
-			.content("타임캡슐 입니다.")
-			.member(nowMember)
-			.capsuleCode(code)
-			.address("서울특별시 종로구 대학로12길 38 (동숭동)")
-			.latitude(37.582412965088F)
-			.longitude(127.00378236901F)
-			.unlockDate(LocalDate.now().plusDays(3))
-			.capsuleType(Role.ROLE_ADMIN == nowMember.getRole() ? 2 : 1)
-			.build());
+				.title("캡슐 6")
+				.content("타임캡슐 입니다.")
+				.member(nowMember)
+				.capsuleCode(code)
+				.address("서울특별시 종로구 대학로12길 38 (동숭동)")
+				.latitude(37.582412965088F)
+				.longitude(127.00378236901F)
+				.unlockDate(LocalDate.now().plusDays(3))
+				.capsuleType(Role.ROLE_ADMIN == nowMember.getRole() ? 2 : 1)
+				.build());
 
 		List<Capsule> capsuleList_2 = capsuleRepository.findAll();
 
