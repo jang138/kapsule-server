@@ -172,4 +172,6 @@ public class CapsuleService {
 	private boolean isCapsuleSharedWithMember(Capsule capsule, Member member) {
 		return sharedKeyRepository.existsByCapsuleAndMember(capsule, member);
 	}
+
+
 }

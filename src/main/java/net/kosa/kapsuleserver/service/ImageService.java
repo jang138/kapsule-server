@@ -20,6 +20,7 @@ import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -72,6 +73,15 @@ public class ImageService {
             e.printStackTrace();
             return new ResponseEntity<>("파일 업로드 중 오류가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    /**
+     * 이미지 조회
+     */
+    @Transactional(readOnly = true)
+    public ResponseEntity<?> findByCapsule(Long capsuleId) {
+        <List<Image> image = imageRepository.findById(capsuleId);
+
     }
 
     /**
