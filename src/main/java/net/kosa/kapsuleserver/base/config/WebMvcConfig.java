@@ -15,7 +15,10 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(jwtInterceptor)
                 .addPathPatterns("/api/v1/**")
+                .addPathPatterns("/landmark/{id}")
                 .addPathPatterns("/capsule/**")
+                .excludePathPatterns("/api/v1/auth/**")
+                .excludePathPatterns("/landmark")
                 .excludePathPatterns("/api/v1/auth/**");
     }
 }
