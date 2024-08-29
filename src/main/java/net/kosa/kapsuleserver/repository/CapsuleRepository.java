@@ -11,4 +11,7 @@ public interface CapsuleRepository extends JpaRepository<Capsule, Long> {
 
 	List<Capsule> findAllByMemberId(Long memberId);
 	Optional<Capsule> findByCapsuleCode(String capsuleCode);
+
+	// 랜드마크 데이터인지 구분
+	List<Capsule> findByCapsuleType(int capsuleType);
 }
