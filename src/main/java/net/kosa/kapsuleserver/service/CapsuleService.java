@@ -4,6 +4,8 @@ import java.security.SecureRandom;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import net.kosa.kapsuleserver.dto.ImageDTO;
+import net.kosa.kapsuleserver.repository.ImageRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +19,7 @@ import net.kosa.kapsuleserver.repository.MemberRepository;
 import net.kosa.kapsuleserver.repository.SharedKeyRepository;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * CapsuleService는 타임캡슐과 관련된 로직들을 구현합니다.
@@ -25,11 +28,12 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CapsuleService {
 
-	private final CapsuleRepository capsuleRepository;
 	private static final String CHARACTER_SET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 	private final SecureRandom random = new SecureRandom();
+	private final CapsuleRepository capsuleRepository;
 	private final MemberRepository memberRepository;
 	private final SharedKeyRepository sharedKeyRepository;
+	private final ImageService imageService;
 
 	/**
 	 * 타임캡슐 저장
@@ -50,7 +54,11 @@ public class CapsuleService {
 			.build();
 
 		// 데이터베이스에 저장
-		capsuleRepository.save(capsule);
+		Capsule savedCapsule = capsuleRepository.save(capsule);
+
+		if(capsuleDTO.getImages() != null || !capsuleDTO.getImages().isEmpty()) {
+			imageService.save(savedCapsule, capsuleDTO.getImages());
+		}
 	}
 
 	/**

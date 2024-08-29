@@ -1,9 +1,11 @@
 package net.kosa.kapsuleserver.dto;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import lombok.Builder;
 import lombok.Getter;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @author dayoung
@@ -23,5 +25,6 @@ public class CapsuleDTO {
 	private LocalDate unlockDate;
 	private String capsuleCode;
 	private String kakaoId;
+	private List<MultipartFile> images;
 
 }
