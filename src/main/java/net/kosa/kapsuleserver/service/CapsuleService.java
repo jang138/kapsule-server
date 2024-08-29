@@ -57,7 +57,8 @@ public class CapsuleService {
 		// 데이터베이스에 저장
 		Capsule savedCapsule = capsuleRepository.save(capsule);
 
-		if (capsuleDTO.getImages() != null || !capsuleDTO.getImages().isEmpty()) {
+		// 이미지 저장
+		if (capsuleDTO.getImages() != null && !capsuleDTO.getImages().isEmpty()) {
 			imageService.save(savedCapsule, capsuleDTO.getImages());
 		}
 	}
