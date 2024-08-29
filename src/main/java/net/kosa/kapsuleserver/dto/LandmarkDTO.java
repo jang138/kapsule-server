@@ -22,18 +22,10 @@ public class LandmarkDTO {
     private String capsuleCode;
     private int capsuleType;
     private String image;
-
+    private Float longitude;
+    private Float latitude;
     private MemberDTO member;
-    private Coordinates coordinates;  // 좌표 정보 추가
     private Content content;
-
-    // 내부 클래스 정의
-    @Getter
-    @Builder
-    public static class Coordinates {
-        private Float lat;
-        private Float lng;
-    }
 
     @Getter
     @Builder
