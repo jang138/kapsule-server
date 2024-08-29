@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import net.kosa.kapsuleserver.base.entity.Role;
 import net.kosa.kapsuleserver.dto.CapsuleDTO;
+import net.kosa.kapsuleserver.dto.MemberDTO;
 import net.kosa.kapsuleserver.entity.Capsule;
 import net.kosa.kapsuleserver.entity.Member;
 import net.kosa.kapsuleserver.repository.CapsuleRepository;
@@ -83,22 +84,36 @@ public class CapsuleService {
 	}
 
 	/**
+	 * 
 	 * Capsule 리스트를 DTO 리스트로 변환
 	 */
 	private List<CapsuleDTO> convertToDTO(List<Capsule> capsuleList) {
 		return capsuleList.stream()
-			.map(capsule -> CapsuleDTO.builder()
-				.id(capsule.getId())
-				.member(capsule.getMember())
-				.title(capsule.getTitle())
-				.content(capsule.getContent())
-				.address(capsule.getAddress())
-				.longitude(capsule.getLongitude())
-				.latitude(capsule.getLatitude())
-				.unlockDate(capsule.getUnlockDate())
-				.capsuleCode(capsule.getCapsuleCode())
-				.build())
+			.map(this::convertCapsuleToDTO)
 			.collect(Collectors.toList());
+	}
+
+	private CapsuleDTO convertCapsuleToDTO(Capsule capsule) {
+		return CapsuleDTO.builder()
+			.id(capsule.getId())
+			.member(convertMemberToDTO(capsule.getMember()))
+			.title(capsule.getTitle())
+			.content(capsule.getContent())
+			.address(capsule.getAddress())
+			.longitude(capsule.getLongitude())
+			.latitude(capsule.getLatitude())
+			.unlockDate(capsule.getUnlockDate())
+			.capsuleCode(capsule.getCapsuleCode())
+			.build();
+	}
+
+	private MemberDTO convertMemberToDTO(Member member) {
+		return MemberDTO.builder()
+			.id(member.getId())
+			.nickname(member.getNickname())
+			.kakaoId(member.getKakaoId())
+			.role(String.valueOf(member.getRole()))
+			.build();
 	}
 
 	/**
