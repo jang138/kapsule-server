@@ -14,6 +14,7 @@ import java.util.Map;
 public class CustomOAuth2User implements OAuth2User {
 
     private String kakaoId;
+    private String profileImageUrl;
 
     @Override
     public Map<String, Object> getAttributes() {
@@ -29,4 +30,6 @@ public class CustomOAuth2User implements OAuth2User {
     public String getName() {
         return this.kakaoId;
     }
+
+    public String getProfileImageUrl(){return this.profileImageUrl;}
 }
