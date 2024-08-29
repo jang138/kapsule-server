@@ -52,8 +52,8 @@ public class LandmarkService {
                     .title(landmarkDTO.getTitle())
                     .content(contentJson)
                     .address(landmarkDTO.getAddress())
-                    .longitude(landmarkDTO.getCoordinates().getLng())
-                    .latitude(landmarkDTO.getCoordinates().getLat())
+                    .longitude(landmarkDTO.getLongitude())
+                    .latitude(landmarkDTO.getLatitude())
                     .unlockDate(landmarkDTO.getUnlockDate())
                     .capsuleCode(capsuleService.createRandomCode(8))
                     .capsuleType(member.getRole() == Role.ROLE_ADMIN ? 2 : 1)
@@ -83,8 +83,8 @@ public class LandmarkService {
                     .title(updatedLandmarkDTO.getTitle())
                     .content(contentJson)
                     .address(updatedLandmarkDTO.getAddress())
-                    .longitude(updatedLandmarkDTO.getCoordinates().getLng())
-                    .latitude(updatedLandmarkDTO.getCoordinates().getLat())
+                    .longitude(updatedLandmarkDTO.getLongitude())
+                    .latitude(updatedLandmarkDTO.getLatitude())
                     .unlockDate(updatedLandmarkDTO.getUnlockDate())
                     .build();
 
@@ -133,10 +133,8 @@ public class LandmarkService {
                 .capsuleCode(capsule.getCapsuleCode())
                 .capsuleType(capsule.getCapsuleType())
                 .unlockDate(capsule.getUnlockDate())
-                .coordinates(LandmarkDTO.Coordinates.builder()
-                        .lat(capsule.getLatitude())
-                        .lng(capsule.getLongitude())
-                        .build())
+                .longitude(capsule.getLongitude())
+                .latitude(capsule.getLatitude())
                 .build();
     }
     private MemberDTO convertMemberToDTO(Member member) {
