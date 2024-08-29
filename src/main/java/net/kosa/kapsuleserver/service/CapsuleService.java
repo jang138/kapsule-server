@@ -173,6 +173,7 @@ public class CapsuleService {
 				.latitude(capsule.getLatitude())
 				.unlockDate(capsule.getUnlockDate())
 				.capsuleType(capsule.getCapsuleType())
+				.images(imagePathList)
 				.build();
 	}
 
