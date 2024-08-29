@@ -4,10 +4,7 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import net.kosa.kapsuleserver.dto.CapsuleDTO;
 import net.kosa.kapsuleserver.entity.Capsule;
@@ -73,5 +70,15 @@ public class SharedKeyController {
 		return ResponseEntity.ok("SharedKey가 성공적으로 저장되었습니다.");
 	}
 
+
+	@DeleteMapping("/{id}")
+	public ResponseEntity<String> deleteSharedKey(
+		@PathVariable Long id,
+		@RequestAttribute String kakaoId) {
+
+
+
+		return ResponseEntity.noContent().build();
+	}
 
 }
