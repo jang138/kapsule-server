@@ -60,7 +60,7 @@ public class Capsule extends BaseEntity {
 	@Column(nullable = false)
 	private Integer capsuleType;
 
-	@ManyToOne(cascade = CascadeType.REMOVE)
+	@ManyToOne
 	@JoinColumn(name = "MEMBER_ID", nullable = false)
 	private Member member;
 
