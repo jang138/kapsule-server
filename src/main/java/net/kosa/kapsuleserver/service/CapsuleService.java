@@ -1,10 +1,12 @@
 package net.kosa.kapsuleserver.service;
 
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import net.kosa.kapsuleserver.dto.ImageDTO;
+import net.kosa.kapsuleserver.entity.Image;
 import net.kosa.kapsuleserver.repository.ImageRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -156,6 +158,11 @@ public class CapsuleService {
 		if (!capsule.getMember().getId().equals(member.getId()) && !isCapsuleSharedWithMember(capsule, member)) {
 			throw new SecurityException("타임캡슐을 조회할 권한이 없습니다.");
 		}
+
+		List<Image> imageList = imageService.getImage(capsuleId);
+		List<String> imagePathList = imageList.stream()
+				.map(Image::getPath)
+				.toList();
 
 		return CapsuleDetailDTO.builder()
 				.id(capsule.getId())

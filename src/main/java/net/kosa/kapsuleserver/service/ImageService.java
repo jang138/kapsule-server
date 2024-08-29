@@ -79,9 +79,8 @@ public class ImageService {
      * 이미지 조회
      */
     @Transactional(readOnly = true)
-    public ResponseEntity<?> findByCapsule(Long capsuleId) {
-        <List<Image> image = imageRepository.findById(capsuleId);
-
+    public List<Image> getImage(Long capsuleId) {
+        return imageRepository.findByCapsuleId(capsuleId);
     }
 
     /**
