@@ -2,6 +2,8 @@ package net.kosa.kapsuleserver.controller;
 
 import java.util.List;
 
+import net.kosa.kapsuleserver.entity.Member;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -74,11 +76,28 @@ public class SharedKeyController {
 	@DeleteMapping("/{id}")
 	public ResponseEntity<String> deleteSharedKey(
 		@PathVariable Long id,
-		@RequestAttribute String kakaoId) {
+		@RequestAttribute("kakaoId") String kakaoId) {
 
+		try {
+			if (kakaoId == null || kakaoId.isEmpty()) {
+				return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+						.body("로그인 상태를 확인해주세요.");
+			}
 
+			Long memberId = memberService.getIdByKakaoId(kakaoId);
+			sharedKeyService.deleteSharedKey(memberId, id);
 
-		return ResponseEntity.noContent().build();
+			return ResponseEntity.noContent().build();
+
+		} catch (IllegalArgumentException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+					.body(e.getMessage());
+
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body("타임캡슐 삭제 중 오류가 발생했습니다.");
+		}
+
 	}
 
 }
