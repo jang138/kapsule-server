@@ -124,7 +124,7 @@ public class CapsuleTests {
 
 		// 4. 저장된 SharedKey를 검증합니다.
 		SharedKeyId sharedKeyId = new SharedKeyId(memberId, capsuleId);
-		SharedKey savedSharedKey = sharedKeyRepository.findAllByMemberId(memberId);
+		SharedKey savedSharedKey = (SharedKey) sharedKeyRepository.findAllByMemberId(memberId);
 
 		// 5. 검증
 		assertThat(savedSharedKey).isNotNull();
