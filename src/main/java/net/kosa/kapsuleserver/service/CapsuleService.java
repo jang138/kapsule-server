@@ -4,6 +4,8 @@ import java.security.SecureRandom;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import net.kosa.kapsuleserver.dto.ImageDTO;
+import net.kosa.kapsuleserver.repository.ImageRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,20 +19,22 @@ import net.kosa.kapsuleserver.entity.Member;
 import net.kosa.kapsuleserver.repository.CapsuleRepository;
 import net.kosa.kapsuleserver.repository.MemberRepository;
 import net.kosa.kapsuleserver.repository.SharedKeyRepository;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @author dayoung
- * CapsuleService는 타임캡슐과 관련된 로직들을 구현합니다.
+ *         CapsuleService는 타임캡슐과 관련된 로직들을 구현합니다.
  */
 @Service
 @RequiredArgsConstructor
 public class CapsuleService {
 
-	private final CapsuleRepository capsuleRepository;
 	private static final String CHARACTER_SET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 	private final SecureRandom random = new SecureRandom();
+	private final CapsuleRepository capsuleRepository;
 	private final MemberRepository memberRepository;
 	private final SharedKeyRepository sharedKeyRepository;
+	private final ImageService imageService;
 
 	/**
 	 * 타임캡슐 저장
@@ -39,19 +43,24 @@ public class CapsuleService {
 	public void saveCapsule(CapsuleDTO capsuleDTO, Member member) {
 		// Capsule 엔티티 생성
 		Capsule capsule = Capsule.builder()
-			.member(member)
-			.title(capsuleDTO.getTitle())
-			.content(capsuleDTO.getContent())
-			.address(capsuleDTO.getAddress())
-			.longitude(capsuleDTO.getLongitude())
-			.latitude(capsuleDTO.getLatitude())
-			.unlockDate(capsuleDTO.getUnlockDate())
-			.capsuleCode(createRandomCode(8))
-			.capsuleType(member.getRole() == Role.ROLE_ADMIN ? 2 : 1)
-			.build();
+				.member(member)
+				.title(capsuleDTO.getTitle())
+				.content(capsuleDTO.getContent())
+				.address(capsuleDTO.getAddress())
+				.longitude(capsuleDTO.getLongitude())
+				.latitude(capsuleDTO.getLatitude())
+				.unlockDate(capsuleDTO.getUnlockDate())
+				.capsuleCode(createRandomCode(8))
+				.capsuleType(member.getRole() == Role.ROLE_ADMIN ? 2 : 1)
+				.build();
 
 		// 데이터베이스에 저장
-		capsuleRepository.save(capsule);
+		Capsule savedCapsule = capsuleRepository.save(capsule);
+
+		// 이미지 저장
+		if (capsuleDTO.getImages() != null && !capsuleDTO.getImages().isEmpty()) {
+			imageService.save(savedCapsule, capsuleDTO.getImages());
+		}
 	}
 
 	/**
@@ -90,31 +99,31 @@ public class CapsuleService {
 	 */
 	private List<CapsuleDTO> convertToDTO(List<Capsule> capsuleList) {
 		return capsuleList.stream()
-			.map(this::convertCapsuleToDTO)
-			.collect(Collectors.toList());
+				.map(this::convertCapsuleToDTO)
+				.collect(Collectors.toList());
 	}
 
 	private CapsuleDTO convertCapsuleToDTO(Capsule capsule) {
 		return CapsuleDTO.builder()
-			.id(capsule.getId())
-			.member(convertMemberToDTO(capsule.getMember()))
-			.title(capsule.getTitle())
-			.content(capsule.getContent())
-			.address(capsule.getAddress())
-			.longitude(capsule.getLongitude())
-			.latitude(capsule.getLatitude())
-			.unlockDate(capsule.getUnlockDate())
-			.capsuleCode(capsule.getCapsuleCode())
-			.build();
+				.id(capsule.getId())
+				.member(convertMemberToDTO(capsule.getMember()))
+				.title(capsule.getTitle())
+				.content(capsule.getContent())
+				.address(capsule.getAddress())
+				.longitude(capsule.getLongitude())
+				.latitude(capsule.getLatitude())
+				.unlockDate(capsule.getUnlockDate())
+				.capsuleCode(capsule.getCapsuleCode())
+				.build();
 	}
 
 	private MemberDTO convertMemberToDTO(Member member) {
 		return MemberDTO.builder()
-			.id(member.getId())
-			.nickname(member.getNickname())
-			.kakaoId(member.getKakaoId())
-			.role(String.valueOf(member.getRole()))
-			.build();
+				.id(member.getId())
+				.nickname(member.getNickname())
+				.kakaoId(member.getKakaoId())
+				.role(String.valueOf(member.getRole()))
+				.build();
 	}
 
 	/**
