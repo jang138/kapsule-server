@@ -89,8 +89,8 @@ public class CapsuleController {
 		}
 	}
 
+	// 타임캡슐 상세 조회
 	@GetMapping("/{id}")
-	@ResponseBody
 	public ResponseEntity<?> getCapsuleDetail(@PathVariable Long id) {
 		try {
 			if (!loginUtil.isLogin()) {
@@ -98,23 +98,20 @@ public class CapsuleController {
 						.body("로그인 상태를 확인해주세요.");
 			}
 
-			Member member = loginUtil.getMember(); // 현재 로그인한 사용자
+			Member member = loginUtil.getMember();
 			CapsuleDetailDTO capsuleDetail = capsuleService.findCapsuleById(id, member);
 
 			return ResponseEntity.ok(capsuleDetail);
 
 		} catch (SecurityException e) {
-			// 권한이 없는 경우
 			return ResponseEntity.status(HttpStatus.FORBIDDEN)
 					.body(e.getMessage());
 
 		} catch (IllegalArgumentException e) {
-			// 존재하지 않는 캡슐인 경우
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
 					.body(e.getMessage());
 
 		} catch (Exception e) {
-			// 그 외 오류
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 					.body("타임캡슐 조회 중 오류가 발생했습니다.");
 		}
