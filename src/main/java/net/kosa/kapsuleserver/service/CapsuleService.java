@@ -9,21 +9,21 @@ import net.kosa.kapsuleserver.repository.ImageRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.RequiredArgsConstructor;
 import net.kosa.kapsuleserver.base.entity.Role;
 import net.kosa.kapsuleserver.dto.CapsuleDTO;
+import net.kosa.kapsuleserver.dto.CapsuleDetailDTO;
 import net.kosa.kapsuleserver.dto.MemberDTO;
 import net.kosa.kapsuleserver.entity.Capsule;
 import net.kosa.kapsuleserver.entity.Member;
 import net.kosa.kapsuleserver.repository.CapsuleRepository;
 import net.kosa.kapsuleserver.repository.MemberRepository;
 import net.kosa.kapsuleserver.repository.SharedKeyRepository;
-
-import lombok.RequiredArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @author dayoung
- * CapsuleService는 타임캡슐과 관련된 로직들을 구현합니다.
+ *         CapsuleService는 타임캡슐과 관련된 로직들을 구현합니다.
  */
 @Service
 @RequiredArgsConstructor
@@ -43,21 +43,21 @@ public class CapsuleService {
 	public void saveCapsule(CapsuleDTO capsuleDTO, Member member) {
 		// Capsule 엔티티 생성
 		Capsule capsule = Capsule.builder()
-			.member(member)
-			.title(capsuleDTO.getTitle())
-			.content(capsuleDTO.getContent())
-			.address(capsuleDTO.getAddress())
-			.longitude(capsuleDTO.getLongitude())
-			.latitude(capsuleDTO.getLatitude())
-			.unlockDate(capsuleDTO.getUnlockDate())
-			.capsuleCode(createRandomCode(8))
-			.capsuleType(member.getRole() == Role.ROLE_ADMIN ? 2 : 1)
-			.build();
+				.member(member)
+				.title(capsuleDTO.getTitle())
+				.content(capsuleDTO.getContent())
+				.address(capsuleDTO.getAddress())
+				.longitude(capsuleDTO.getLongitude())
+				.latitude(capsuleDTO.getLatitude())
+				.unlockDate(capsuleDTO.getUnlockDate())
+				.capsuleCode(createRandomCode(8))
+				.capsuleType(member.getRole() == Role.ROLE_ADMIN ? 2 : 1)
+				.build();
 
 		// 데이터베이스에 저장
 		Capsule savedCapsule = capsuleRepository.save(capsule);
 
-		if(capsuleDTO.getImages() != null || !capsuleDTO.getImages().isEmpty()) {
+		if (capsuleDTO.getImages() != null || !capsuleDTO.getImages().isEmpty()) {
 			imageService.save(savedCapsule, capsuleDTO.getImages());
 		}
 	}
@@ -81,7 +81,7 @@ public class CapsuleService {
 	public void deleteCapsule(Long capsuleId, Member member) {
 		// ID로 타임캡슐 조회
 		Capsule capsule = capsuleRepository.findById(capsuleId)
-			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 타임캡슐입니다."));
+				.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 타임캡슐입니다."));
 
 		// 멤버가 해당 캡슐의 소유자인지 확인
 		if (!capsule.getMember().getKakaoId().equals(member.getKakaoId())) {
@@ -98,31 +98,31 @@ public class CapsuleService {
 	 */
 	private List<CapsuleDTO> convertToDTO(List<Capsule> capsuleList) {
 		return capsuleList.stream()
-			.map(this::convertCapsuleToDTO)
-			.collect(Collectors.toList());
+				.map(this::convertCapsuleToDTO)
+				.collect(Collectors.toList());
 	}
 
 	private CapsuleDTO convertCapsuleToDTO(Capsule capsule) {
 		return CapsuleDTO.builder()
-			.id(capsule.getId())
-			.member(convertMemberToDTO(capsule.getMember()))
-			.title(capsule.getTitle())
-			.content(capsule.getContent())
-			.address(capsule.getAddress())
-			.longitude(capsule.getLongitude())
-			.latitude(capsule.getLatitude())
-			.unlockDate(capsule.getUnlockDate())
-			.capsuleCode(capsule.getCapsuleCode())
-			.build();
+				.id(capsule.getId())
+				.member(convertMemberToDTO(capsule.getMember()))
+				.title(capsule.getTitle())
+				.content(capsule.getContent())
+				.address(capsule.getAddress())
+				.longitude(capsule.getLongitude())
+				.latitude(capsule.getLatitude())
+				.unlockDate(capsule.getUnlockDate())
+				.capsuleCode(capsule.getCapsuleCode())
+				.build();
 	}
 
 	private MemberDTO convertMemberToDTO(Member member) {
 		return MemberDTO.builder()
-			.id(member.getId())
-			.nickname(member.getNickname())
-			.kakaoId(member.getKakaoId())
-			.role(String.valueOf(member.getRole()))
-			.build();
+				.id(member.getId())
+				.nickname(member.getNickname())
+				.kakaoId(member.getKakaoId())
+				.role(String.valueOf(member.getRole()))
+				.build();
 	}
 
 	/**
@@ -145,4 +145,30 @@ public class CapsuleService {
 		return code;
 	}
 
+	/* 타임캡슐 디테일 페이지 : 캡슐 ID로 캡슐 조회 */
+	@Transactional
+	public CapsuleDetailDTO findCapsuleById(Long capsuleId, Member member) {
+		Capsule capsule = capsuleRepository.findById(capsuleId)
+				.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 타임캡슐입니다."));
+
+		// 타임캡슐 소유자 확인 또는 공유 상태 확인
+		if (!capsule.getMember().getId().equals(member.getId()) && !isCapsuleSharedWithMember(capsule, member)) {
+			throw new SecurityException("타임캡슐을 조회할 권한이 없습니다.");
+		}
+
+		return CapsuleDetailDTO.builder()
+				.id(capsule.getId())
+				.title(capsule.getTitle())
+				.content(capsule.getContent())
+				.address(capsule.getAddress())
+				.longitude(capsule.getLongitude())
+				.latitude(capsule.getLatitude())
+				.unlockDate(capsule.getUnlockDate())
+				.capsuleType(capsule.getCapsuleType())
+				.build();
+	}
+
+	private boolean isCapsuleSharedWithMember(Capsule capsule, Member member) {
+		return sharedKeyRepository.existsByCapsuleAndMember(capsule, member);
+	}
 }
