@@ -52,10 +52,8 @@ public class LandmarkTests {
                 .title("애버랜드")
                 .address("경기도 용인시 에버랜드로 199")
                 .content(null) // 나중에 수정 예정
-                .coordinates(LandmarkDTO.Coordinates.builder()
-                        .lat(37.29310247591812F)
-                        .lng(127.20219323036818F)
-                        .build())
+                .latitude(37.29310247591812F)
+                .longitude(127.20219323036818F)
                 .unlockDate(LocalDate.now().plusDays(3))
                 .build();
 

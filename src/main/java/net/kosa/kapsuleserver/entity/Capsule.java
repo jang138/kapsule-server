@@ -65,6 +65,9 @@ public class Capsule extends BaseEntity {
 	private Member member;
 
 	@OneToMany(mappedBy = "capsule", cascade = CascadeType.REMOVE)
+	private List<Image> images;
+
+	@OneToMany(mappedBy = "capsule", cascade = CascadeType.REMOVE)
 	private List<SharedKey> sharedKeys;
 
 }

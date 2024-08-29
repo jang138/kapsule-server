@@ -23,6 +23,7 @@ public class LandmarkService {
     private final CapsuleRepository capsuleRepository;
     private final CapsuleService capsuleService;
     private final ObjectMapper objectMapper; // JSON 변환용 ObjectMapper 추가
+    private final ImageService imageService;
 
     // 모든 랜드마크 조회
     @Transactional
@@ -45,8 +46,10 @@ public class LandmarkService {
     @Transactional
     public void saveLandmark(LandmarkDTO landmarkDTO, Member member) {
         try {
+            // JSON 형식의 content를 String으로 변환
             String contentJson = objectMapper.writeValueAsString(landmarkDTO.getContent());
 
+            // Capsule 엔티티 생성
             Capsule capsule = Capsule.builder()
                     .member(member)
                     .title(landmarkDTO.getTitle())
@@ -59,7 +62,14 @@ public class LandmarkService {
                     .capsuleType(member.getRole() == Role.ROLE_ADMIN ? 2 : 1)
                     .build();
 
-            capsuleRepository.save(capsule);
+            // 데이터베이스에 Capsule 엔티티 저장
+            Capsule savedCapsule = capsuleRepository.save(capsule);
+
+            // 이미지 저장 로직 추가
+            if (landmarkDTO.getImages() != null && !landmarkDTO.getImages().isEmpty()) {
+                imageService.save(savedCapsule, landmarkDTO.getImages());
+            }
+
         } catch (Exception e) {
             throw new RuntimeException("랜드마크 생성 중 오류가 발생했습니다.", e);
         }
