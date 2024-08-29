@@ -22,7 +22,7 @@ public class JwtProvider {
         return Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
     }
 
-    public String create (String kakaoId, String role){
+    public String create (String kakaoId, String role, String profileImageUrl ){
 
         Date expiredDate = Date.from(Instant.now().plus(1, ChronoUnit.HOURS));
         Key key = getSigningKey();
@@ -31,6 +31,7 @@ public class JwtProvider {
                 .signWith(key, SignatureAlgorithm.HS256)
                 .setSubject(kakaoId)
                 .claim("role", role)
+                .claim("profileImage", profileImageUrl)
                 .setIssuedAt(new Date())
                 .setExpiration(expiredDate)
                 .compact();

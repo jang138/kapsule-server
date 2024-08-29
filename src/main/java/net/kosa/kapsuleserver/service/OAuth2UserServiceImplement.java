@@ -27,13 +27,16 @@ public class OAuth2UserServiceImplement extends DefaultOAuth2UserService {
     public OAuth2User loadUser(OAuth2UserRequest request) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(request);
         try{
+            System.out.println("kkeeyy");
             System.out.println(new ObjectMapper().writeValueAsString(oAuth2User.getAttributes()));
         } catch (Exception e){
             e.printStackTrace();
         }
 
         String kakaoId = oAuth2User.getAttributes().get("id").toString();
-        String nickname = ((Map<String, Object>) oAuth2User.getAttributes().get("properties")).get("nickname").toString();
+        Map<String, Object> properties = (Map<String, Object>) oAuth2User.getAttributes().get("properties");
+        String nickname = (String) properties.get("nickname");
+        String profileImageUrl = (String) properties.get("profile_image");
 
         Optional<Member> existingMember = memberRepository.findByKakaoId(kakaoId);
         Member member;
@@ -46,6 +49,6 @@ public class OAuth2UserServiceImplement extends DefaultOAuth2UserService {
             memberRepository.save(member);
         }
 
-        return new CustomOAuth2User(kakaoId);
+        return new CustomOAuth2User(kakaoId, profileImageUrl);
     }
 }
