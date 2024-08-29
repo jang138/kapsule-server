@@ -2,16 +2,11 @@ package net.kosa.kapsuleserver.controller;
 
 import java.util.List;
 
+import net.kosa.kapsuleserver.entity.Capsule;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import net.kosa.kapsuleserver.base.util.LoginUtil;
 import net.kosa.kapsuleserver.dto.CapsuleDTO;
@@ -94,7 +89,6 @@ public class CapsuleController {
 		}
 	}
 
-	// 캡슐 ID로 상세 조회
 	@GetMapping("/{id}")
 	@ResponseBody
 	public ResponseEntity<?> getCapsuleDetail(@PathVariable Long id) {
@@ -104,15 +98,23 @@ public class CapsuleController {
 						.body("로그인 상태를 확인해주세요.");
 			}
 
-			CapsuleDetailDTO capsuleDetail = capsuleService.findCapsuleById(id);
+			Member member = loginUtil.getMember(); // 현재 로그인한 사용자
+			CapsuleDetailDTO capsuleDetail = capsuleService.findCapsuleById(id, member);
 
 			return ResponseEntity.ok(capsuleDetail);
 
+		} catch (SecurityException e) {
+			// 권한이 없는 경우
+			return ResponseEntity.status(HttpStatus.FORBIDDEN)
+					.body(e.getMessage());
+
 		} catch (IllegalArgumentException e) {
+			// 존재하지 않는 캡슐인 경우
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
 					.body(e.getMessage());
 
 		} catch (Exception e) {
+			// 그 외 오류
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 					.body("타임캡슐 조회 중 오류가 발생했습니다.");
 		}

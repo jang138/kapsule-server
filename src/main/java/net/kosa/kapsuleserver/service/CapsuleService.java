@@ -139,9 +139,14 @@ public class CapsuleService {
 
 	/* 타임캡슐 디테일 페이지 : 캡슐 ID로 캡슐 조회 */
 	@Transactional
-	public CapsuleDetailDTO findCapsuleById(Long capsuleId) {
+	public CapsuleDetailDTO findCapsuleById(Long capsuleId, Member member) {
 		Capsule capsule = capsuleRepository.findById(capsuleId)
 				.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 타임캡슐입니다."));
+
+		// 현재 사용자가 캡슐의 소유자인지 확인
+		if (!capsule.getMember().getId().equals(member.getId())) {
+			throw new SecurityException("타임캡슐을 조회할 권한이 없습니다.");
+		}
 
 		return CapsuleDetailDTO.builder()
 				.id(capsule.getId())
