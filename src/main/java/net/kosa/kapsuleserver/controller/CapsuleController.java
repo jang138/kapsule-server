@@ -38,9 +38,10 @@ public class CapsuleController {
      * 타임캡슐 생성
      */
 	@PostMapping("/create")
-	public ResponseEntity<String> saveCapsule(@RequestBody CapsuleDTO capsuleDTO,
-											  @RequestParam String kakaoId) {
+	public ResponseEntity<String> saveCapsule(@RequestBody CapsuleDTO capsuleDTO) {
 		try {
+			String kakaoId = capsuleDTO.getKakaoId();
+
 			if (kakaoId == null || kakaoId.isEmpty()) {
 				return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
 						.body("로그인 상태를 확인해주세요.");
@@ -82,11 +83,12 @@ public class CapsuleController {
 
 	// 타임캡슐 삭제
 	@DeleteMapping("/{id}")
-	public ResponseEntity<String> deleteCapsule(@PathVariable Long capsuleId) {
+	public ResponseEntity<String> deleteCapsule(@PathVariable Long capsuleId,
+												@RequestParam String kakaoId) {
 		try {
-			if (!loginUtil.isLogin()) {
+			if (kakaoId == null || kakaoId.isEmpty()) {
 				return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-					.body("로그인 상태를 확인해주세요.");
+						.body("로그인 상태를 확인해주세요.");
 			}
 
 			Member member = loginUtil.getMember();
