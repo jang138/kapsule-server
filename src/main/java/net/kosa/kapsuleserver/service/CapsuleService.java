@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.RequiredArgsConstructor;
 import net.kosa.kapsuleserver.base.entity.Role;
 import net.kosa.kapsuleserver.dto.CapsuleDTO;
 import net.kosa.kapsuleserver.dto.CapsuleDetailDTO;
@@ -16,8 +17,6 @@ import net.kosa.kapsuleserver.entity.Member;
 import net.kosa.kapsuleserver.repository.CapsuleRepository;
 import net.kosa.kapsuleserver.repository.MemberRepository;
 import net.kosa.kapsuleserver.repository.SharedKeyRepository;
-
-import lombok.RequiredArgsConstructor;
 
 /**
  * @author dayoung
