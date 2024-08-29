@@ -55,11 +55,14 @@ public class CapsuleController {
 		}
 	}
 
+	/**
+     * 나의 타임캡슐 조회
+     */
 	@GetMapping("/list")
 	public ResponseEntity<?> findMyCapsule(@RequestParam String kakaoId) {
 		try {
-			Long member = memberService.getIdByKakaoId(kakaoId);
-			List<CapsuleDTO> myCapsule = capsuleService.findMyCapsule(member);
+			Long memberId = memberService.getIdByKakaoId(kakaoId);
+			List<CapsuleDTO> myCapsule = capsuleService.findMyCapsule(memberId);
 
 			return ResponseEntity.ok(myCapsule);
 
