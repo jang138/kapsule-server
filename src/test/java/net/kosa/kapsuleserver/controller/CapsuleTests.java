@@ -23,8 +23,7 @@ import net.kosa.kapsuleserver.repository.SharedKeyRepository;
 import net.kosa.kapsuleserver.service.CapsuleService;
 import net.kosa.kapsuleserver.service.MemberService;
 import net.kosa.kapsuleserver.service.SharedKeyService;
-
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 public class CapsuleTests {
@@ -54,6 +53,7 @@ public class CapsuleTests {
 	}
 
 	@Test
+	@Transactional
 	@DisplayName("타임캡슐 생성하기")
 	void saveCapsule() {
 		List<Capsule> capsuleList_1 = capsuleRepository.findAll();
@@ -110,7 +110,7 @@ public class CapsuleTests {
 	}
 
 	@Test
-	// @Transactional
+	@Transactional
 	@DisplayName("캡슐코드로 SharedKey 저장하기")
 	void saveSharedKey() {
 
