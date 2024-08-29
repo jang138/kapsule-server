@@ -25,6 +25,7 @@ public class CapsuleDTO {
 	private LocalDate unlockDate;
 	private String capsuleCode;
 	private String kakaoId;
+	private Integer capsuleType;
 	private List<MultipartFile> images;
 
 }
