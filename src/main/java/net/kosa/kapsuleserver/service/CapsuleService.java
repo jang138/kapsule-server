@@ -22,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
+ * @author dayoung
  * CapsuleService는 타임캡슐과 관련된 로직들을 구현합니다.
  */
 @Service
