@@ -1,5 +1,6 @@
 package net.kosa.kapsuleserver.controller;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import net.kosa.kapsuleserver.entity.Capsule;
@@ -7,6 +8,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.multipart.MultipartFile;
 
 import lombok.RequiredArgsConstructor;
 import net.kosa.kapsuleserver.base.util.LoginUtil;
@@ -33,16 +37,34 @@ public class CapsuleController {
      * 타임캡슐 생성
      */
 	@PostMapping("/create")
-	public ResponseEntity<String> saveCapsule(@RequestBody CapsuleDTO capsuleDTO) {
+	public ResponseEntity<String> saveCapsule(
+		@RequestPart("title") String title,
+		@RequestPart("content") String content,
+		@RequestPart("unlockDate") String unlockDate,
+		@RequestPart("address") String address,
+		@RequestPart("latitude") String latitude,
+		@RequestPart("longitude") String longitude,
+		@RequestPart("kakaoId") String kakaoId,
+		@RequestPart(value = "images", required = false) List<MultipartFile> images) {
 		try {
-			String kakaoId = capsuleDTO.getKakaoId();
-
 			if (kakaoId == null || kakaoId.isEmpty()) {
 				return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-						.body("로그인 상태를 확인해주세요.");
+					.body("로그인 상태를 확인해주세요.");
 			}
 
 			Member member = memberService.getMemberByKakaoId(kakaoId);
+
+			CapsuleDTO capsuleDTO = CapsuleDTO.builder()
+				.title(title)
+				.content(content)
+				.unlockDate(LocalDate.parse(unlockDate))
+				.address(address)
+				.latitude((float)Double.parseDouble(latitude))
+				.longitude((float)Double.parseDouble(longitude))
+				.kakaoId(kakaoId)
+				.images(images)
+				.build();
+
 			capsuleService.saveCapsule(capsuleDTO, member);
 
 			return ResponseEntity.status(HttpStatus.CREATED)
@@ -50,7 +72,7 @@ public class CapsuleController {
 
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-				.body("타임캠슐 저장 중 오류가 발생했습니다.");
+				.body("타임캠슐 저장 중 오류가 발생했습니다: " + e.getMessage());
 		}
 	}
 
@@ -78,16 +100,16 @@ public class CapsuleController {
 
 	// 타임캡슐 삭제
 	@DeleteMapping("/{id}")
-	public ResponseEntity<String> deleteCapsule(@PathVariable Long id,
-												@RequestAttribute String kakaoId) {
+	public ResponseEntity<String> deleteCapsule(@PathVariable Long capsuleId,
+												@RequestParam String kakaoId) {
 		try {
 			if (kakaoId == null || kakaoId.isEmpty()) {
 				return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
 						.body("로그인 상태를 확인해주세요.");
 			}
 
-			Member member = memberService.getMemberByKakaoId(kakaoId);
-			capsuleService.deleteCapsule(id, member);
+			Member member = loginUtil.getMember();
+			capsuleService.deleteCapsule(capsuleId, member);
 
 			return ResponseEntity.noContent().build();
 
