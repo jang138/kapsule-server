@@ -34,16 +34,20 @@ public class CapsuleController {
 	private final CapsuleService capsuleService;
 	private final LoginUtil loginUtil;
 
-	// 타임캡슐 생성
+	/**
+     * 타임캡슐 생성
+     */
 	@PostMapping("/create")
 	public ResponseEntity<String> saveCapsule(@RequestBody CapsuleDTO capsuleDTO) {
 		try {
-			if (!loginUtil.isLogin()) {
+			String kakaoId = capsuleDTO.getKakaoId();
+
+			if (kakaoId == null || kakaoId.isEmpty()) {
 				return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-					.body("로그인 상태를 확인해주세요.");
+						.body("로그인 상태를 확인해주세요.");
 			}
 
-			Member member = loginUtil.getMember();
+			Member member = memberService.getMemberByKakaoId(kakaoId);
 			capsuleService.saveCapsule(capsuleDTO, member);
 
 			return ResponseEntity.status(HttpStatus.CREATED)
@@ -55,11 +59,19 @@ public class CapsuleController {
 		}
 	}
 
+	/**
+     * 나의 타임캡슐 조회
+     */
 	@GetMapping("/list")
 	public ResponseEntity<?> findMyCapsule(@RequestParam String kakaoId) {
 		try {
-			Long member = memberService.getIdByKakaoId(kakaoId);
-			List<CapsuleDTO> myCapsule = capsuleService.findMyCapsule(member);
+			if (kakaoId == null || kakaoId.isEmpty()) {
+				return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+						.body("로그인 상태를 확인해주세요.");
+			}
+
+			Long memberId = memberService.getIdByKakaoId(kakaoId);
+			List<CapsuleDTO> myCapsule = capsuleService.findMyCapsule(memberId);
 
 			return ResponseEntity.ok(myCapsule);
 
@@ -71,11 +83,12 @@ public class CapsuleController {
 
 	// 타임캡슐 삭제
 	@DeleteMapping("/{id}")
-	public ResponseEntity<String> deleteCapsule(@PathVariable Long capsuleId) {
+	public ResponseEntity<String> deleteCapsule(@PathVariable Long capsuleId,
+												@RequestParam String kakaoId) {
 		try {
-			if (!loginUtil.isLogin()) {
+			if (kakaoId == null || kakaoId.isEmpty()) {
 				return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-					.body("로그인 상태를 확인해주세요.");
+						.body("로그인 상태를 확인해주세요.");
 			}
 
 			Member member = loginUtil.getMember();

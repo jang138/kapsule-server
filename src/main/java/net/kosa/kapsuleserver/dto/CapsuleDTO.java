@@ -22,5 +22,6 @@ public class CapsuleDTO {
 	private Float latitude;
 	private LocalDate unlockDate;
 	private String capsuleCode;
+	private String kakaoId;
 
 }
