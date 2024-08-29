@@ -55,6 +55,7 @@ public class SharedKeyService {
 				.longitude(sharedKey.getCapsule().getLongitude())
 				.latitude(sharedKey.getCapsule().getLatitude())
 				.unlockDate(sharedKey.getCapsule().getUnlockDate())
+				.capsuleType(sharedKey.getCapsule().getCapsuleType())
 //				.capsuleCode(sharedKey.getCapsule().getCapsuleCode())
 //				.kakaoId(sharedKey.getMember().getKakaoId())
 				.build())
