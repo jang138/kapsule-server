@@ -2,6 +2,7 @@ package net.kosa.kapsuleserver.service;
 
 import java.util.List;
 
+import net.kosa.kapsuleserver.dto.MemberDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,14 +47,27 @@ public class SharedKeyService {
 		List<SharedKey> sharedKeyList = sharedKeyRepository.findAllByMemberId(memberId);
 		return sharedKeyList.stream()
 			.map(sharedKey -> CapsuleDTO.builder()
+				.id(sharedKey.getCapsule().getId())
+				.member(toMemberDTO(sharedKey.getMember()))
 				.title(sharedKey.getCapsule().getTitle())
 				.content(sharedKey.getCapsule().getContent())
 				.address(sharedKey.getCapsule().getAddress())
 				.longitude(sharedKey.getCapsule().getLongitude())
 				.latitude(sharedKey.getCapsule().getLatitude())
 				.unlockDate(sharedKey.getCapsule().getUnlockDate())
+//				.capsuleCode(sharedKey.getCapsule().getCapsuleCode())
+//				.kakaoId(sharedKey.getMember().getKakaoId())
 				.build())
 			.toList();
+	}
+
+	private MemberDTO toMemberDTO(Member member) {
+		return MemberDTO.builder()
+			.id(member.getId())
+			.nickname(member.getNickname())
+			.kakaoId(member.getKakaoId())
+			.role(member.getRole().name())
+			.build();
 	}
 
 	/**

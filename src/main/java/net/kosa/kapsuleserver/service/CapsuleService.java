@@ -144,8 +144,8 @@ public class CapsuleService {
 		Capsule capsule = capsuleRepository.findById(capsuleId)
 				.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 타임캡슐입니다."));
 
-		// 현재 사용자가 캡슐의 소유자인지 확인
-		if (!capsule.getMember().getId().equals(member.getId())) {
+		// 타임캡슐 소유자 확인 또는 공유 상태 확인
+		if (!capsule.getMember().getId().equals(member.getId()) && !isCapsuleSharedWithMember(capsule, member)) {
 			throw new SecurityException("타임캡슐을 조회할 권한이 없습니다.");
 		}
 
@@ -159,5 +159,9 @@ public class CapsuleService {
 				.unlockDate(capsule.getUnlockDate())
 				.capsuleType(capsule.getCapsuleType())
 				.build();
+	}
+
+	private boolean isCapsuleSharedWithMember(Capsule capsule, Member member) {
+		return sharedKeyRepository.existsByCapsuleAndMember(capsule, member);
 	}
 }
