@@ -4,6 +4,7 @@ import java.util.List;
 
 import net.kosa.kapsuleserver.base.entity.Role;
 import net.kosa.kapsuleserver.dto.CapsuleDTO;
+import net.kosa.kapsuleserver.service.MemberService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -26,6 +27,7 @@ public class LandmarkController {
     private static final Logger log = LoggerFactory.getLogger(LandmarkController.class);
     private final LandmarkService landmarkService;
     private final LoginUtil loginUtil;
+    private final MemberService memberService;
 
     // 모든 랜드마크 조회
     @GetMapping
@@ -57,21 +59,13 @@ public class LandmarkController {
     // 새 랜드마크 생성
     @PostMapping("/create")
     public ResponseEntity<String> saveCapsule(@RequestBody LandmarkDTO landmarkDTO) {
-        try{
-/*            if(!loginUtil.isLogin()) {
+        try {
+            if(!loginUtil.isLogin()) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                         .body("로그인 상태를 확인해주세요.");
             }
 
-            Member member = loginUtil.getMember();*/
-
-            // 임시 멤버 정보를 사용하여 저장
-            Member member = Member.builder()
-                    .id(65L)  // 기본 멤버 ID
-                    .nickname("관리자")  // 기본 닉네임
-                    .kakaoId("Kakao_TMP_06")  // 임시 카카오 ID
-                    .role(Role.ROLE_ADMIN)  // 기본 역할
-                    .build();
+            Member member = loginUtil.getMember();
 
             landmarkService.saveLandmark(landmarkDTO, member);
 
@@ -84,37 +78,42 @@ public class LandmarkController {
         }
     }
 
-
     // 랜드마크 삭제
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteCapsule(@PathVariable("id") Long capsuleId) {
+    public ResponseEntity<String> deleteCapsule(@RequestAttribute("kakaoId") String kakaoId, @PathVariable("id") Long capsuleId) {
+        System.out.println("카카오아이디 " + kakaoId );
+
+        Member member = memberService.getMemberByKakaoId(kakaoId);
+
+        landmarkService.deleteLandmark(capsuleId, member);
+
+        return ResponseEntity.noContent().build();
+
+    }
+
+    // 랜드마크 수정
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateLandmark(@PathVariable Long id, @RequestBody LandmarkDTO updatedLandmarkDTO) {
         try {
-//            if (!loginUtil.isLogin()) {
-//                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-//                        .body("로그인 상태를 확인해주세요.");
-//            }
-//
-//            Member member = loginUtil.getMember();
+            if (!loginUtil.isLogin()) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body("로그인 상태를 확인해주세요.");
+            }
 
-            // 임시 멤버 정보를 사용하여 저장
-            Member member = Member.builder()
-                    .id(65L)  // 기본 멤버 ID
-                    .nickname("관리자")  // 기본 닉네임
-                    .kakaoId("Kakao_TMP_06")  // 임시 카카오 ID
-                    .role(Role.ROLE_ADMIN)  // 기본 역할
-                    .build();
+            Member member = loginUtil.getMember();
 
-            landmarkService.deleteLandmark(capsuleId, member);
-
-            return ResponseEntity.noContent().build();
+            LandmarkDTO updatedLandmark = landmarkService.updateLandmark(id, updatedLandmarkDTO, member);
+            return ResponseEntity.ok(updatedLandmark);
 
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(e.getMessage());
-
+                    .body("해당 랜드마크가 존재하지 않습니다.");
+        } catch (SecurityException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body("수정할 권한이 없습니다.");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("타임캡슐 삭제 중 오류가 발생했습니다.");
+                    .body("랜드마크 수정 중 오류가 발생했습니다.");
         }
     }
 }

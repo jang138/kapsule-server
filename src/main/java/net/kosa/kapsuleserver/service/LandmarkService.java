@@ -1,11 +1,11 @@
 package net.kosa.kapsuleserver.service;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.kosa.kapsuleserver.base.entity.Role;
+import net.kosa.kapsuleserver.dto.MemberDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -65,31 +65,35 @@ public class LandmarkService {
         }
     }
 
-//    // 랜드마크 수정
-//    @Transactional
-//    public LandmarkDTO updateLandmark(Long id, LandmarkDTO updatedLandmarkDTO) {
-//        Capsule capsule = capsuleRepository.findById(id)
-//                .filter(c -> c.getCapsuleType() == 2)
-//                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 랜드마크입니다."));
-//
-//        try {
-//            String contentJson = objectMapper.writeValueAsString(updatedLandmarkDTO.getContent());
-//
-//            capsule = capsule.toBuilder()
-//                    .title(updatedLandmarkDTO.getTitle())
-//                    .content(contentJson)
-//                    .address(updatedLandmarkDTO.getAddress())
-//                    .longitude(updatedLandmarkDTO.getCoordinates().getLng())
-//                    .latitude(updatedLandmarkDTO.getCoordinates().getLat())
-//                    .unlockDate(updatedLandmarkDTO.getUnlockDate())
-//                    .build();
-//
-//            capsule = capsuleRepository.save(capsule);
-//            return convertToDTO(capsule);
-//        } catch (Exception e) {
-//            throw new RuntimeException("랜드마크 수정 중 오류가 발생했습니다.", e);
-//        }
-//    }
+    // 랜드마크 수정
+    @Transactional
+    public LandmarkDTO updateLandmark(Long id, LandmarkDTO updatedLandmarkDTO, Member member) {
+        Capsule capsule = capsuleRepository.findById(id)
+                .filter(c -> c.getCapsuleType() == 2)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 랜드마크입니다."));
+
+        if (!capsule.getMember().getId().equals(member.getId()) && !member.getRole().equals(Role.ROLE_ADMIN)) {
+            throw new SecurityException("랜드마크를 수정할 권한이 없습니다.");
+        }
+
+        try {
+            String contentJson = objectMapper.writeValueAsString(updatedLandmarkDTO.getContent());
+
+            capsule = capsule.toBuilder()
+                    .title(updatedLandmarkDTO.getTitle())
+                    .content(contentJson)
+                    .address(updatedLandmarkDTO.getAddress())
+                    .longitude(updatedLandmarkDTO.getCoordinates().getLng())
+                    .latitude(updatedLandmarkDTO.getCoordinates().getLat())
+                    .unlockDate(updatedLandmarkDTO.getUnlockDate())
+                    .build();
+
+            capsule = capsuleRepository.save(capsule);
+            return convertToDTO(capsule);
+        } catch (Exception e) {
+            throw new RuntimeException("랜드마크 수정 중 오류가 발생했습니다.", e);
+        }
+    }
 
     // 랜드마크 삭제
     @Transactional
@@ -97,7 +101,7 @@ public class LandmarkService {
         Capsule capsule = capsuleRepository.findById(capsuleId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 랜드마크입니다."));
 
-        if (!capsule.getMember().getKakaoId().equals(member.getKakaoId())) {
+        if (!capsule.getMember().getRole().equals(Role.ROLE_ADMIN)) {
             throw new SecurityException("랜드마크를 삭제할 권한이 없습니다.");
         }
 
@@ -122,6 +126,7 @@ public class LandmarkService {
 
         return LandmarkDTO.builder()
                 .id(capsule.getId())
+                .member(convertMemberToDTO(capsule.getMember()))
                 .title(capsule.getTitle())
                 .content(content) // 파싱된 content가 있으면 사용, 아니면 null
                 .address(capsule.getAddress())
@@ -132,6 +137,14 @@ public class LandmarkService {
                         .lat(capsule.getLatitude())
                         .lng(capsule.getLongitude())
                         .build())
+                .build();
+    }
+    private MemberDTO convertMemberToDTO(Member member) {
+        return MemberDTO.builder()
+                .id(member.getId())
+                .nickname(member.getNickname())
+                .kakaoId(member.getKakaoId())
+                .role(String.valueOf(member.getRole()))
                 .build();
     }
 }

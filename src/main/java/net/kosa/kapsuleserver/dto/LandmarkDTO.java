@@ -25,13 +25,9 @@ public class LandmarkDTO {
     private int capsuleType;
     private String image;
 
-    private Member member;
+    private MemberDTO member;
     private Coordinates coordinates;  // 좌표 정보 추가
     private Content content;
-// content 필드를 String으로 유지하여, HTML로 처리
-//@Column(nullable = false)
-//@Lob
-//private String content;
 
     // 내부 클래스 정의
     @Getter
