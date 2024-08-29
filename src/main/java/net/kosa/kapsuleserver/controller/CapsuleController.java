@@ -34,7 +34,9 @@ public class CapsuleController {
 	private final CapsuleService capsuleService;
 	private final LoginUtil loginUtil;
 
-	// 타임캡슐 생성
+	/**
+     * 타임캡슐 생성
+     */
 	@PostMapping("/create")
 	public ResponseEntity<String> saveCapsule(@RequestBody CapsuleDTO capsuleDTO) {
 		try {
@@ -61,6 +63,11 @@ public class CapsuleController {
 	@GetMapping("/list")
 	public ResponseEntity<?> findMyCapsule(@RequestParam String kakaoId) {
 		try {
+			if (kakaoId == null || kakaoId.isEmpty()) {
+				return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+						.body("로그인 상태를 확인해주세요.");
+			}
+
 			Long memberId = memberService.getIdByKakaoId(kakaoId);
 			List<CapsuleDTO> myCapsule = capsuleService.findMyCapsule(memberId);
 
