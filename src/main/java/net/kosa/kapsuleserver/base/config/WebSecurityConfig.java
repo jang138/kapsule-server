@@ -53,7 +53,7 @@ public class WebSecurityConfig implements WebMvcConfigurer {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
             .authorizeHttpRequests(request -> request
-                .requestMatchers("/**").permitAll()
+                .requestMatchers("/**", "/static/**").permitAll()
                 .requestMatchers("/api/v1/user-info").authenticated()
                 .anyRequest().authenticated()
             )
