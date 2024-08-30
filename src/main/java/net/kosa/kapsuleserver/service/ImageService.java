@@ -16,7 +16,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -56,13 +58,13 @@ public class ImageService {
                 if (!image.isEmpty()) {
                     String fileName = makeFileName(image.getOriginalFilename() != null
                                                     ? image.getOriginalFilename() : "temp");
-                    String imagePath = Paths.get(imageUploadDir, fileName).toString();
+                    Path savePath = Paths.get(imageUploadDir, fileName);
 
-                    Files.copy(image.getInputStream(), Paths.get(imagePath));
+                    Files.copy(image.getInputStream(), savePath, StandardCopyOption.REPLACE_EXISTING);
 
                     Image saveImage = Image.builder()
                             .capsule(capsule)
-                            .path(imagePath)
+                            .path("images/" + fileName)
                             .build();
 
                     imageRepository.save(saveImage);

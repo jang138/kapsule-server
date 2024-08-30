@@ -1,13 +1,10 @@
 package net.kosa.kapsuleserver.service;
 
 import java.security.SecureRandom;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import net.kosa.kapsuleserver.dto.ImageDTO;
 import net.kosa.kapsuleserver.entity.Image;
-import net.kosa.kapsuleserver.repository.ImageRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +18,6 @@ import net.kosa.kapsuleserver.entity.Member;
 import net.kosa.kapsuleserver.repository.CapsuleRepository;
 import net.kosa.kapsuleserver.repository.MemberRepository;
 import net.kosa.kapsuleserver.repository.SharedKeyRepository;
-import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @author dayoung
