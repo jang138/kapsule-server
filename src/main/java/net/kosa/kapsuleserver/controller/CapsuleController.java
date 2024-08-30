@@ -24,7 +24,7 @@ import net.kosa.kapsuleserver.service.MemberService;
  * @author dayoung
  * CapsuleController는 타임캡슐과 관련된 요청들을 처리합니다.
  */
-@Controller
+@RestController
 @RequestMapping("/capsule")
 @RequiredArgsConstructor
 public class CapsuleController {
@@ -100,16 +100,16 @@ public class CapsuleController {
 
 	// 타임캡슐 삭제
 	@DeleteMapping("/{id}")
-	public ResponseEntity<String> deleteCapsule(@PathVariable Long capsuleId,
-												@RequestParam String kakaoId) {
+	public ResponseEntity<String> deleteCapsule(@PathVariable Long id,
+												@RequestAttribute("kakaoId") String kakaoId) {
 		try {
 			if (kakaoId == null || kakaoId.isEmpty()) {
 				return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
 						.body("로그인 상태를 확인해주세요.");
 			}
 
-			Member member = loginUtil.getMember();
-			capsuleService.deleteCapsule(capsuleId, member);
+			Member member = memberService.getMemberByKakaoId(kakaoId);
+			capsuleService.deleteCapsule(id, member);
 
 			return ResponseEntity.noContent().build();
 

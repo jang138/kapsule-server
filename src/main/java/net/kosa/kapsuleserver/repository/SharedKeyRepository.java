@@ -14,4 +14,6 @@ public interface SharedKeyRepository extends JpaRepository<SharedKey, SharedKeyI
 	boolean existsByCapsuleAndMember(Capsule capsule, Member member);
 
 	List<SharedKey> findAllByMemberId(Long memberId);
+
+	SharedKey findByMemberIdAndCapsuleId(Long memberId, Long capsuleId);
 }

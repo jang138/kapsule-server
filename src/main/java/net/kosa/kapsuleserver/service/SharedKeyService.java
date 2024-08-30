@@ -98,4 +98,13 @@ public class SharedKeyService {
 		sharedKeyRepository.save(sharedKey);
 	}
 
+
+	@Transactional
+	public void deleteSharedKey(Long memberId, Long capsuleId){
+		SharedKey sharedKey = sharedKeyRepository.findByMemberIdAndCapsuleId(memberId, capsuleId);
+		if (sharedKey == null) {
+			throw new IllegalArgumentException("해당 멤버와 캡슐 간의 키가 존재하지 않습니다.");
+		}
+		sharedKeyRepository.delete(sharedKey);
+	}
 }

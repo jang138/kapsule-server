@@ -2,12 +2,11 @@ package net.kosa.kapsuleserver.controller;
 
 import java.util.List;
 
+import net.kosa.kapsuleserver.entity.Member;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import net.kosa.kapsuleserver.dto.CapsuleDTO;
 import net.kosa.kapsuleserver.entity.Capsule;
@@ -73,5 +72,32 @@ public class SharedKeyController {
 		return ResponseEntity.ok("SharedKey가 성공적으로 저장되었습니다.");
 	}
 
+
+	@DeleteMapping("/{id}")
+	public ResponseEntity<String> deleteSharedKey(
+		@PathVariable Long id,
+		@RequestAttribute("kakaoId") String kakaoId) {
+
+		try {
+			if (kakaoId == null || kakaoId.isEmpty()) {
+				return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+						.body("로그인 상태를 확인해주세요.");
+			}
+
+			Long memberId = memberService.getIdByKakaoId(kakaoId);
+			sharedKeyService.deleteSharedKey(memberId, id);
+
+			return ResponseEntity.noContent().build();
+
+		} catch (IllegalArgumentException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+					.body(e.getMessage());
+
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body("타임캡슐 삭제 중 오류가 발생했습니다.");
+		}
+
+	}
 
 }
