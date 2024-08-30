@@ -1,6 +1,7 @@
 package net.kosa.kapsuleserver.dto;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -18,5 +19,6 @@ public class CapsuleDetailDTO {
     private Float latitude;
     private LocalDate unlockDate;
     private Integer capsuleType;
+    private List<String> images;
 
 }

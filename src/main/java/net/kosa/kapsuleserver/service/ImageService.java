@@ -16,10 +16,13 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -55,13 +58,13 @@ public class ImageService {
                 if (!image.isEmpty()) {
                     String fileName = makeFileName(image.getOriginalFilename() != null
                                                     ? image.getOriginalFilename() : "temp");
-                    String imagePath = Paths.get(imageUploadDir, fileName).toString();
+                    Path savePath = Paths.get(imageUploadDir, fileName);
 
-                    Files.copy(image.getInputStream(), Paths.get(imagePath));
+                    Files.copy(image.getInputStream(), savePath, StandardCopyOption.REPLACE_EXISTING);
 
                     Image saveImage = Image.builder()
                             .capsule(capsule)
-                            .path(imagePath)
+                            .path("images/" + fileName)
                             .build();
 
                     imageRepository.save(saveImage);
@@ -72,6 +75,14 @@ public class ImageService {
             e.printStackTrace();
             return new ResponseEntity<>("파일 업로드 중 오류가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    /**
+     * 이미지 조회
+     */
+    @Transactional(readOnly = true)
+    public List<Image> getImage(Long capsuleId) {
+        return imageRepository.findByCapsuleId(capsuleId);
     }
 
     /**
